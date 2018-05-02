@@ -27,15 +27,15 @@ public class implementaciones
 	         // crear instancia con lo encontrado?
 	         Field[] listaAtributos = instancia.getFields();
 	         try {
-	        		Constructor constructorSinParametros = instancia.getConstructor(); // agarra que clase es
+	        		Constructor<T> constructorSinParametros = instancia.getConstructor(); // agarra que clase es
 	        				
-	        		T nuevoObjetoDeMiClase = (T) constructorSinParametros.newInstance(); // instancia el objeto
+	        		Object nuevoObjetoDeMiClase=constructorSinParametros.newInstance(); // instancia el objeto
 
 	        		// faltaria setear todos los atributos
 
 	        		System.out.println("\nNuevo objeto creado");
 
-	        	} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException | SecurityException | NoSuchMethodException e) {
+	        	} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException e) {
 	        		e.printStackTrace();
 	        	}
 	      }
