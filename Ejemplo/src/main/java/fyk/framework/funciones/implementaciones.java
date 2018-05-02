@@ -17,7 +17,8 @@ public class implementaciones
 	}
 	
 	// funcion que retorna una instancia de T si se encuentra en la fila buscada
-	//ESTO ANDA
+	// otra solucion que se me ocurrio es ir tirando un string a la base de datos para cada atributo y en vez de usar SELECT *
+	// usar SELECT nombreAtributo FROM... y asi ir armando y toda la info rescatada del rs iria directamente al valor del set
 	public static <T> T find(Class<T> instancia, Object id) throws ClassNotFoundException, SQLException{
 		String nombreDeLaTabla = instancia.getSimpleName(); // obtiene el nombre de la clase (tabla) en String
 		String clave = obtenerCampoId(instancia); // obtiene cual es el nombre del campo que contiene la clave
@@ -25,30 +26,37 @@ public class implementaciones
 		String hql = String.format("SELECT * FROM %s WHERE %s=%s",nombreDeLaTabla,clave,idString); // string que va a ser pasado como query
 		
 		Connection conn = hacerConexion(); // conecta con la base de datos
-		Statement stmt = conn.createStatement();
-		ResultSet rs = stmt.executeQuery(hql); // manda query al motor
+		Statement stmt = conn.createStatement(); // conecta
+		ResultSet rs = stmt.executeQuery(hql); // devuelve en rs todos los datos que matchean (en este caso 1 registro entero)
 		
 		// creacion del objeto nuevo:
         try {
-			
       		Constructor<T> constructorSinParametros = instancia.getConstructor(); // agarra constructor	
       		Object nuevoObjetoDeMiClase= (Object) constructorSinParametros.newInstance(); // instancia el objeto a partir de constructor
       	
       		Field[] listaAtributos = instancia.getDeclaredFields(); // array de atributos
-      		Annotation[] anotaciones = instancia.getAnnotations();	// array de annotations
-
+      		Annotation[] anotaciones = instancia.getAnnotations();	// array de annotations (no se si hace falta usarlo)
+ 		
        		System.out.println("\nNuevo objeto creado");
-
-       	} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException e) {
-       		e.printStackTrace();
-       	}
-		while(rs.next()){
-			// mapear los resultados del SQL al objeto creado...
-	      }
+       		
+			// mapear los resultados del SQL al objeto creado y retornarlo...
+       		int cantAtributos = listaAtributos.length;
+       		// este metodo de aca agarra cada atributo y dice que ese atributo en el objeto nuevo va a tener el valor sql:
+       		while(cantAtributos != 0){
+       		// listaAtributos[cantAtributos].set(nuevoObjetoDeMiClase, "valor que va a tener cada atributo desde sql");
+       		// cantAtributos--;
+       		// nota: si esto fuera 1 solo atributo, no habria que contemplar que valor, porque el SQL devolveria ya todo
+       		// el valor del atributo y nada mas. Aca devuelve todo un registro entero y quizas sea mejor cambiarlo
+       		// asi no hacemos lista de atributos sino que iteramos dentro para cada atributo con varios strings SELECT SQL
+       		}
+       		return nuevoObjetoDeMiClase;
 	      // cierre de la conexion
 	      rs.close();
 	      stmt.close();
 	      conn.close();
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException e) {
+       		e.printStackTrace();
+       	}
 		return null;
 	}
 	
