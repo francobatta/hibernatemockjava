@@ -42,7 +42,15 @@ public class implementaciones
 			// mapear los resultados del SQL al objeto creado y retornarlo...
        		int cantAtributos = listaAtributos.length;
        		// este metodo de aca agarra cada atributo y dice que ese atributo en el objeto nuevo va a tener el valor sql:
-       		while(cantAtributos != 0){
+       		for (Field variable : listaAtributos) {
+       			String nombreVariable = variable.getName();
+       			Type tipo = variable.getGenericType();
+       			if (String.class == tipo) {
+					variable.set(nuevoObjetoDeMiClase,rs.getString(nombreVariable) );
+				} else if (int.class == tipo) {
+					variable.setInt(objetoDeMiClase,rs.getInt(nombreVariable));
+				}
+       		}
        		// listaAtributos[cantAtributos].set(nuevoObjetoDeMiClase, "valor que va a tener cada atributo desde sql");
        		// cantAtributos--;
        		// nota: si esto fuera 1 solo atributo, no habria que contemplar que valor, porque el SQL devolveria ya todo
