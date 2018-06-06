@@ -11,10 +11,6 @@ import pablosz.xpress.ann.*;
 
 public class implementaciones
 {
-	public static void main(String[] args)
-	{
-
-	}
 	
 	// funcion que retorna una instancia de T si se encuentra en la fila buscada
 	// otra solucion que se me ocurrio es ir tirando un string a la base de datos para cada atributo y en vez de usar SELECT *
@@ -32,15 +28,14 @@ public class implementaciones
 		// creacion del objeto nuevo:
         try {
       		Constructor<T> constructorSinParametros = instancia.getConstructor(); // agarra constructor	
-      		Object nuevoObjetoDeMiClase= (Object) constructorSinParametros.newInstance(); // instancia el objeto a partir de constructor
+      		T nuevoObjetoDeMiClase= constructorSinParametros.newInstance(); // instancia el objeto a partir de constructor
       	
       		Field[] listaAtributos = instancia.getDeclaredFields(); // array de atributos
-      		Annotation[] anotaciones = instancia.getAnnotations();	// array de annotations (no se si hace falta usarlo)
  		
        		System.out.println("\nNuevo objeto creado");
        		
 			// mapear los resultados del SQL al objeto creado y retornarlo...
-       		int cantAtributos = listaAtributos.length;
+
        		// este metodo de aca agarra cada atributo y dice que ese atributo en el objeto nuevo va a tener el valor sql:
        		for (Field variable : listaAtributos) {
        			String nombreVariable = variable.getName();
@@ -48,7 +43,7 @@ public class implementaciones
        			if (String.class == tipo) {
 					variable.set(nuevoObjetoDeMiClase,rs.getString(nombreVariable) );
 				} else if (int.class == tipo) {
-					variable.setInt(objetoDeMiClase,rs.getInt(nombreVariable));
+					variable.setInt(nuevoObjetoDeMiClase,rs.getInt(nombreVariable));
 				}
        		}
        		// listaAtributos[cantAtributos].set(nuevoObjetoDeMiClase, "valor que va a tener cada atributo desde sql");
@@ -56,12 +51,12 @@ public class implementaciones
        		// nota: si esto fuera 1 solo atributo, no habria que contemplar que valor, porque el SQL devolveria ya todo
        		// el valor del atributo y nada mas. Aca devuelve todo un registro entero y quizas sea mejor cambiarlo
        		// asi no hacemos lista de atributos sino que iteramos dentro para cada atributo con varios strings SELECT SQL
-       		}
-       		return nuevoObjetoDeMiClase;
+
 	      // cierre de la conexion
 	      rs.close();
 	      stmt.close();
 	      conn.close();
+    		return nuevoObjetoDeMiClase;	      
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException e) {
        		e.printStackTrace();
        	}
