@@ -1,7 +1,7 @@
 package fyk.tests;
 import pablosz.xpress.ann.*;
 
-@Table(name="TEST_USUARIO")
+@Table(name="Usuario_rejemplo")
 public class Usuario_rejemplo
 {
 @Id(strategy=Id.IDENTITY)
@@ -11,7 +11,8 @@ private int idUsuario;
 public String username;
 @Column
 public String password;
-
+@ManyToOne(columnName="id_persona")
+private Persona persona;
 
 int getIdUsuario(){
 	return idUsuario;

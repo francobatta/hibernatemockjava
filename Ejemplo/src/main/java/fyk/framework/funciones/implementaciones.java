@@ -16,7 +16,7 @@ public class implementaciones
 	// otra solucion que se me ocurrio es ir tirando un string a la base de datos para cada atributo y en vez de usar SELECT *
 	// usar SELECT nombreAtributo FROM... y asi ir armando y toda la info rescatada del rs iria directamente al valor del set
 	public static <T> T find(Class<T> instancia, Object id) throws ClassNotFoundException, SQLException, IOException{
-		String nombreDeLaTabla = instancia.getSimpleName(); // obtiene el nombre de la clase (tabla) en String
+		String nombreDeLaTabla = obtenerNombreTabla(instancia); // obtiene el nombre de la clase (tabla) en String
 		String clave = obtenerCampoId(instancia); // obtiene cual es el nombre del campo que contiene la clave
 		String idString = String.valueOf(id); // convierte el id que pasaron a String para asegurar igualdad
 		String hql = String.format("SELECT * FROM %s WHERE %s=%s",nombreDeLaTabla,clave,idString); // string que va a ser pasado como query
@@ -41,7 +41,7 @@ public class implementaciones
        			String nombreVariable = variable.getName();
        			Type tipo = variable.getGenericType();
        			if (String.class == tipo) {
-					variable.set(nuevoObjetoDeMiClase,rs.getString(nombreVariable) );
+					variable.set(nuevoObjetoDeMiClase,rs.getString(nombreVariable));
 				} else if (int.class == tipo) {
 					variable.setInt(nuevoObjetoDeMiClase,rs.getInt(nombreVariable));
 				}
@@ -67,12 +67,17 @@ public class implementaciones
 		Field[] fields = instancia.getDeclaredFields(); // agrupa todos los atributos de la clase en una coleccion
 		for (Field f : fields) // para todos los atributos de la clase deseada:
 		{
+			f.setAccessible(true);
 			if (f.isAnnotationPresent(Id.class)) // si el atributo tiene annotation id...
 			{
 				return f.getName(); // retorna NOMBRE del campo clave
 			}
 	}
 		return "Tirar error";
+}
+	public static <T> String obtenerNombreTabla(Class<T> instancia){ // agrupa todos los atributos de la clase en una coleccion
+			Table tabla=instancia.getAnnotation(Table.class);
+				return tabla.name(); // retorna nombre de la tabla
 }
 	public static Connection hacerConexion() throws SQLException, ClassNotFoundException, IOException{
 		InputStream input = new FileInputStream("JdbcUtil.properties");
