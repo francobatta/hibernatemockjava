@@ -1,7 +1,8 @@
+package fyk.tests;
 import pablosz.xpress.ann.*;
 
 @Table(name="TEST_USUARIO")
-public class Usuario_ejemplo
+public class Usuario_rejemplo
 {
 @Id(strategy=Id.IDENTITY)
 @Column

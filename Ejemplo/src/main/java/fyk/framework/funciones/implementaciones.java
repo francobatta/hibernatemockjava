@@ -1,5 +1,5 @@
 package fyk.framework.funciones;
-import java.io.FileInputStream;
+import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.sql.*;
@@ -15,12 +15,12 @@ public class implementaciones
 	// funcion que retorna una instancia de T si se encuentra en la fila buscada
 	// otra solucion que se me ocurrio es ir tirando un string a la base de datos para cada atributo y en vez de usar SELECT *
 	// usar SELECT nombreAtributo FROM... y asi ir armando y toda la info rescatada del rs iria directamente al valor del set
-	public static <T> T find(Class<T> instancia, Object id) throws ClassNotFoundException, SQLException{
+	public static <T> T find(Class<T> instancia, Object id) throws ClassNotFoundException, SQLException, IOException{
 		String nombreDeLaTabla = instancia.getSimpleName(); // obtiene el nombre de la clase (tabla) en String
 		String clave = obtenerCampoId(instancia); // obtiene cual es el nombre del campo que contiene la clave
 		String idString = String.valueOf(id); // convierte el id que pasaron a String para asegurar igualdad
 		String hql = String.format("SELECT * FROM %s WHERE %s=%s",nombreDeLaTabla,clave,idString); // string que va a ser pasado como query
-		
+		System.out.println(hql);
 		Connection conn = hacerConexion(); // conecta con la base de datos
 		Statement stmt = conn.createStatement(); // conecta
 		ResultSet rs = stmt.executeQuery(hql); // devuelve en rs todos los datos que matchean (en este caso 1 registro entero)
@@ -35,7 +35,6 @@ public class implementaciones
        		System.out.println("\nNuevo objeto creado");
        		
 			// mapear los resultados del SQL al objeto creado y retornarlo...
-
        		// este metodo de aca agarra cada atributo y dice que ese atributo en el objeto nuevo va a tener el valor sql:
        		for (Field variable : listaAtributos) {
        			String nombreVariable = variable.getName();
@@ -74,8 +73,10 @@ public class implementaciones
 	}
 		return "Tirar error";
 }
-	public static Connection hacerConexion() throws SQLException, ClassNotFoundException{
+	public static Connection hacerConexion() throws SQLException, ClassNotFoundException, IOException{
+		InputStream input = new FileInputStream("JdbcUtil.properties");
 		Properties props = new Properties();
+		props.load(input);
 		String driver = props.getProperty("jdbc.connection.driver");
 		if (driver != null) {
 		    Class.forName(driver) ;
