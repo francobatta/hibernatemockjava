@@ -19,9 +19,9 @@ public class implementaciones
 	public static <T> T find(Class<T> instancia, Object id) throws ClassNotFoundException, SQLException, IOException{
 		String nombreDeLaTabla = obtenerNombreTabla(instancia); // obtiene el nombre de la clase (tabla) en String
 		Field clave = obtenerCampoId(instancia); // obtiene cual es el campo que contiene la clave
-		String valorClave = clave.getName();
+		String campoClave = clave.getName();
 		String idString = String.valueOf(id); // convierte el id que pasaron a String para asegurar igualdad
-		String hql = String.format("SELECT * FROM %s WHERE %s=%s",nombreDeLaTabla,valorClave,idString); // string que va a ser pasado como query
+		String hql = String.format("SELECT * FROM %s WHERE %s=%s",nombreDeLaTabla,campoClave,idString); // string que va a ser pasado como query
 		System.out.println(hql);
 		Connection conn = hacerConexion(); // conecta con la base de datos
 		Statement stmt = conn.createStatement(); // conecta
@@ -54,9 +54,14 @@ public class implementaciones
 		return null;
 	}
 
-	private static Object dameValorClave(Field variable){
-		//JIJO DAME LA CLAVE
-		return variable;				
+	private static Object dameValorClave(Field variable) throws IllegalArgumentException, IllegalAccessException{
+		Object valor = null;
+		Field[] listaCampos=variable.getClass().getFields();
+   		for (Field f : listaCampos) {System.out.println("b");
+			if(f.isAnnotationPresent(Id.class))
+				valor = variable.getInt(f.getName());
+		}
+		return valor;
 	}
 	
 	private static <T> void obtenerValorColumn(ResultSet rs, T nuevoObjetoDeMiClase, Field variable) throws IllegalAccessException,SQLException
@@ -79,7 +84,7 @@ public class implementaciones
 			f.setAccessible(true);
 			if (f.isAnnotationPresent(Id.class)) // si el atributo tiene annotation id...
 			{
-				return f; // retorna NOMBRE del campo clave
+				return f; // retorna campo clave
 			}
 	}
 		return null;
