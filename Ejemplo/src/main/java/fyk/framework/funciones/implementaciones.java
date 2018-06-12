@@ -4,6 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.sql.*;
 import java.util.Properties;
+import java.util.jar.Attributes.Name;
 
 import pablosz.xpress.util.*;
 
@@ -17,9 +18,10 @@ public class implementaciones
 	// usar SELECT nombreAtributo FROM... y asi ir armando y toda la info rescatada del rs iria directamente al valor del set
 	public static <T> T find(Class<T> instancia, Object id) throws ClassNotFoundException, SQLException, IOException{
 		String nombreDeLaTabla = obtenerNombreTabla(instancia); // obtiene el nombre de la clase (tabla) en String
-		String clave = obtenerCampoId(instancia); // obtiene cual es el nombre del campo que contiene la clave
+		Field clave = obtenerCampoId(instancia); // obtiene cual es el campo que contiene la clave
+		String valorClave = clave.getName();
 		String idString = String.valueOf(id); // convierte el id que pasaron a String para asegurar igualdad
-		String hql = String.format("SELECT * FROM %s WHERE %s=%s",nombreDeLaTabla,clave,idString); // string que va a ser pasado como query
+		String hql = String.format("SELECT * FROM %s WHERE %s=%s",nombreDeLaTabla,valorClave,idString); // string que va a ser pasado como query
 		System.out.println(hql);
 		Connection conn = hacerConexion(); // conecta con la base de datos
 		Statement stmt = conn.createStatement(); // conecta
@@ -29,51 +31,58 @@ public class implementaciones
         try {
       		Constructor<T> constructorSinParametros = instancia.getConstructor(); // agarra constructor	
       		T nuevoObjetoDeMiClase= constructorSinParametros.newInstance(); // instancia el objeto a partir de constructor
-      	
+      		Annotation[] annotations = instancia.getAnnotations();
+      		
       		Field[] listaAtributos = instancia.getDeclaredFields(); // array de atributos
- 		
-       		System.out.println("\nNuevo objeto creado");
        		rs.next();
 			// mapear los resultados del SQL al objeto creado y retornarlo...
        		// este metodo de aca agarra cada atributo y dice que ese atributo en el objeto nuevo va a tener el valor sql:
-       		for (Field variable : listaAtributos) {
-       			variable.setAccessible(true);
-       			String nombreVariable = variable.getName();
-       			Type tipo = variable.getGenericType();
-       			if (String.class == tipo) {
-					variable.set(nuevoObjetoDeMiClase,rs.getString(nombreVariable));
-				} else if (int.class == tipo) {
-					variable.setInt(nuevoObjetoDeMiClase,rs.getInt(nombreVariable));
-				}
+       		for (Field variable : listaAtributos) {System.out.println("a");
+       			if(variable.isAnnotationPresent(Column.class))
+       				obtenerValorColumn(rs,nuevoObjetoDeMiClase,variable);
+       			if(variable.isAnnotationPresent(ManyToOne.class))
+       				find(variable.getClass(),dameValorClave(variable));
        		}
-       		// listaAtributos[cantAtributos].set(nuevoObjetoDeMiClase, "valor que va a tener cada atributo desde sql");
-       		// cantAtributos--;
-       		// nota: si esto fuera 1 solo atributo, no habria que contemplar que valor, porque el SQL devolveria ya todo
-       		// el valor del atributo y nada mas. Aca devuelve todo un registro entero y quizas sea mejor cambiarlo
-       		// asi no hacemos lista de atributos sino que iteramos dentro para cada atributo con varios strings SELECT SQL
-
-	      // cierre de la conexion
 	      rs.close();
 	      stmt.close();
 	      conn.close();
+	      System.out.println("\nNuevo objeto creado");
     		return nuevoObjetoDeMiClase;	      
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException | NoSuchMethodException e) {
        		e.printStackTrace();
        	}
 		return null;
 	}
+
+	private static Object dameValorClave(Field variable){
+		//JIJO DAME LA CLAVE
+		return variable;				
+	}
 	
-	public static <T> String obtenerCampoId(Class<T> instancia){
+	private static <T> void obtenerValorColumn(ResultSet rs, T nuevoObjetoDeMiClase, Field variable) throws IllegalAccessException,SQLException
+	{
+		String nombreVariable;
+		variable.setAccessible(true);
+		nombreVariable = variable.getName();
+		Type tipo = variable.getGenericType();
+		if (String.class == tipo) {
+			variable.set(nuevoObjetoDeMiClase,rs.getString(nombreVariable));
+		} else if (int.class == tipo) {
+			variable.setInt(nuevoObjetoDeMiClase,rs.getInt(nombreVariable));
+		}
+	}
+	
+	public static <T> Field obtenerCampoId(Class<T> instancia){
 		Field[] fields = instancia.getDeclaredFields(); // agrupa todos los atributos de la clase en una coleccion
 		for (Field f : fields) // para todos los atributos de la clase deseada:
 		{
 			f.setAccessible(true);
 			if (f.isAnnotationPresent(Id.class)) // si el atributo tiene annotation id...
 			{
-				return f.getName(); // retorna NOMBRE del campo clave
+				return f; // retorna NOMBRE del campo clave
 			}
 	}
-		return "Tirar error";
+		return null;
 }
 	public static <T> String obtenerNombreTabla(Class<T> instancia){ // agrupa todos los atributos de la clase en una coleccion
 			Table tabla=instancia.getAnnotation(Table.class);

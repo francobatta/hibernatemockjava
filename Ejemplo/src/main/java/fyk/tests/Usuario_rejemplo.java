@@ -8,9 +8,9 @@ public class Usuario_rejemplo
 @Column
 private int idUsuario;
 @Column
-public String username;
+private String username;
 @Column
-public String password;
+private String password;
 @ManyToOne(columnName="id_persona")
 private Persona persona;
 
