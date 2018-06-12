@@ -17,7 +17,6 @@ public class main
 		String hql = "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS";
 		boolean estoyConectado = stmt.execute(hql);
 		System.out.println(estoyConectado);
-
         hql = "DROP TABLE Usuario_rejemplo IF EXISTS";
         stmt.executeUpdate(hql);
         hql = "CREATE TABLE Usuario_rejemplo (idUsuario int,username nvarchar(100),password nvarchar(100),)";

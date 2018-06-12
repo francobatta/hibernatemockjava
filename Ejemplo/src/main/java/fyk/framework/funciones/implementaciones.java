@@ -33,7 +33,7 @@ public class implementaciones
       		Field[] listaAtributos = instancia.getDeclaredFields(); // array de atributos
  		
        		System.out.println("\nNuevo objeto creado");
-       		
+       		rs.next();
 			// mapear los resultados del SQL al objeto creado y retornarlo...
        		// este metodo de aca agarra cada atributo y dice que ese atributo en el objeto nuevo va a tener el valor sql:
        		for (Field variable : listaAtributos) {
