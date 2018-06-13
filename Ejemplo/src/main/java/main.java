@@ -16,7 +16,6 @@ public class main
 		Statement stmt = conn.createStatement(); // conecta
 		String hql = "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS";
 		boolean estoyConectado = stmt.execute(hql);
-		System.out.println(estoyConectado);
         hql = "DROP TABLE Usuario_rejemplo IF EXISTS";
         stmt.executeUpdate(hql);
         hql = "DROP TABLE TEST_PERSONA IF EXISTS";
