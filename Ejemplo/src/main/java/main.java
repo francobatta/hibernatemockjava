@@ -21,9 +21,9 @@ public class main
         stmt.executeUpdate(hql);
         hql = "DROP TABLE TEST_PERSONA IF EXISTS";
         stmt.executeUpdate(hql);
-        hql = "CREATE TABLE Usuario_rejemplo (idUsuario int,username nvarchar(100),password nvarchar(100),)";
+        hql = "CREATE TABLE Usuario_rejemplo (idUsuario int,username nvarchar(100),password nvarchar(100),id_persona int)";
         stmt.executeUpdate(hql);
-        hql = "INSERT INTO Usuario_rejemplo (idUsuario,username,password) VALUES ('1','miUser', 'miPass')";
+        hql = "INSERT INTO Usuario_rejemplo (idUsuario,username,password,id_persona) VALUES ('1','miUser', 'miPass','1')";
         stmt.executeUpdate(hql);
         hql = "CREATE TABLE TEST_PERSONA (id_persona int,nombre nvarchar(100),direccion nvarchar(100),fecha_alta date)";
         stmt.executeUpdate(hql);

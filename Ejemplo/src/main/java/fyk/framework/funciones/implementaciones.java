@@ -1,4 +1,5 @@
 package fyk.framework.funciones;
+
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -6,10 +7,10 @@ import java.sql.*;
 import java.util.Properties;
 import java.util.jar.Attributes.Name;
 
+import fyk.tests.Persona;
 import pablosz.xpress.util.*;
 
 import pablosz.xpress.ann.*;
-
 public class implementaciones
 {
 	
@@ -41,7 +42,7 @@ public class implementaciones
        			if(variable.isAnnotationPresent(Column.class))
        				obtenerValorColumn(rs,nuevoObjetoDeMiClase,variable);
        			if(variable.isAnnotationPresent(ManyToOne.class))
-       				find(variable.getClass(),dameValorClave(variable));
+       				obtenerValorManyToOne(rs,nuevoObjetoDeMiClase,variable);
        		}
 	      rs.close();
 	      stmt.close();
@@ -53,7 +54,7 @@ public class implementaciones
        	}
 		return null;
 	}
-
+	//Esto no se maesito
 	private static Object dameValorClave(Field variable) throws IllegalArgumentException, IllegalAccessException{
 		Object valor = null;
 		Field[] listaCampos=variable.getClass().getFields();
@@ -62,6 +63,17 @@ public class implementaciones
 				valor = variable.getInt(f.getName());
 		}
 		return valor;
+	}
+	private static <T> void obtenerValorManyToOne(ResultSet rs, T nuevoObjetoDeMiClase, Field variable) throws ClassNotFoundException, SQLException, IOException, IllegalArgumentException, IllegalAccessException{
+		variable.setAccessible(true);
+		String nombreId=variable.getAnnotation(ManyToOne.class).columnName();
+		String idRelacion=rs.getString(nombreId);
+		String clase = variable.getGenericType().getTypeName();
+		Class clazz=Class.forName(clase);
+		//Object miObjetito= find(clazz,idRelacion);
+		System.out.println(clazz.getSimpleName());
+		System.out.println(idRelacion);
+		variable.set(nuevoObjetoDeMiClase,find(clazz,idRelacion));
 	}
 	
 	private static <T> void obtenerValorColumn(ResultSet rs, T nuevoObjetoDeMiClase, Field variable) throws IllegalAccessException,SQLException
