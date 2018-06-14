@@ -3,6 +3,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import fyk.framework.funciones.*;
 import fyk.tests.*;
@@ -35,9 +37,11 @@ public class main
 		creoTablas();
 		Usuario_rejemplo u = new Usuario_rejemplo();
 		Persona p = new Persona();
+		List<Usuario_rejemplo> lista;
 		try
 		{
-			u = implementaciones.find(Usuario_rejemplo.class, 1);
+			lista = implementaciones.findAll(Usuario_rejemplo.class);
+			
 		}
 		catch(ClassNotFoundException e)
 		{
