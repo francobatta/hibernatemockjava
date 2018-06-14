@@ -69,7 +69,6 @@ public class implementaciones
 		System.out.println(hql);
 		ResultSet rs = stmt.executeQuery(hql);
 		List<T> lista= new ArrayList<T>();
-		boolean termino=false;
 		while (rs.next()) {
 			 try {
 		      		Constructor<T> constructorSinParametros = instancia.getConstructor(); // agarra constructor	
@@ -99,7 +98,6 @@ public class implementaciones
 	    conn.close();
 		return lista;
 	}
-
 	//
 	//Esto no se maesito
 	private static Object dameValorClave(Field variable) throws IllegalArgumentException, IllegalAccessException{
@@ -186,4 +184,66 @@ public class implementaciones
 		Connection con = DriverManager.getConnection(url, username, password);
 		return con;
 	}
+
+	//*****************************************************
+	// De aca en mas todo con query
+	public static <T> List<T> query(Class<T> instancia,String xql,Object ...args) throws ClassNotFoundException, SQLException, IOException{
+		List<T> lista= new ArrayList<T>();
+		String consulta = xql.replaceAll("\\?", "%s");
+		String hql = String.format(consulta,args);
+		System.out.println("Consulta :");
+		System.out.println(hql);
+		Connection conn = hacerConexion(); 
+		Statement stmt = conn.createStatement(); 
+		ResultSet rs = stmt.executeQuery(hql);
+		while (rs.next()) {
+			 try {
+		      		Constructor<T> constructorSinParametros = instancia.getConstructor(); // agarra constructor	
+		      		T nuevoObjetoDeMiClase= constructorSinParametros.newInstance(); // instancia el objeto a partir de constructor
+		      		Annotation[] annotations = instancia.getAnnotations();
+		      		Field[] listaAtributos = instancia.getDeclaredFields(); // array de atributos
+					// mapear los resultados del SQL al objeto creado y retornarlo...
+		       		// este metodo de aca agarra cada atributo y dice que ese atributo en el objeto nuevo va a tener el valor sql:
+		       		for (Field variable : listaAtributos) {System.out.println("Itero sobre lista de atributos");
+		       			if(variable.isAnnotationPresent(Column.class))
+		       				obtenerValorColumn(rs,nuevoObjetoDeMiClase,variable);
+		       			if(variable.isAnnotationPresent(ManyToOne.class))
+		       				//Pregunto si el ManyToOneEsEager
+		       				if(variable.getAnnotation(ManyToOne.class).fetchType()==2)
+		       					obtenerValorManyToOne2(rs,nuevoObjetoDeMiClase,variable);       				
+		       		}
+			      System.out.println("\nNuevo objetito creado");
+		    	lista.add(nuevoObjetoDeMiClase); 
+		        } catch (Exception e) {
+		        	e.printStackTrace();
+		       	}
+		}
+	    rs.close();
+	    stmt.close();
+	    conn.close();
+		return lista;
+	}
+	public static <T> T find2(Class<T> instancia, Object id) throws ClassNotFoundException, SQLException, IOException{
+		String nombreDeLaTabla = obtenerNombreTabla(instancia); // obtiene el nombre de la clase (tabla) en String
+		Field clave = obtenerCampoId(instancia); // obtiene cual es el campo que contiene la clave
+		String claveValor = darNombre(clave);
+		System.out.println(claveValor);
+		return query(instancia,"SELECT * FROM ? WHERE ?=?",nombreDeLaTabla,claveValor,id).get(0);
+	}
+	public static <T> List<T> findAll2(Class<T> instancia) throws ClassNotFoundException, SQLException, IOException{
+		String nombreDeLaTabla = obtenerNombreTabla(instancia);
+		return query(instancia,"SELECT * FROM ?",nombreDeLaTabla);
+	}
+	private static <T> void obtenerValorManyToOne2(ResultSet rs, T nuevoObjetoDeMiClase, Field variable) throws ClassNotFoundException, SQLException, IOException, IllegalArgumentException, IllegalAccessException{
+		variable.setAccessible(true);
+		String nombreId=variable.getAnnotation(ManyToOne.class).columnName();
+		String idRelacion=rs.getString(nombreId);
+		String clase = variable.getGenericType().getTypeName();
+		Class clazz=Class.forName(clase);
+		//Object miObjetito= find(clazz,idRelacion);
+		System.out.println(clazz.getSimpleName());
+		System.out.println(idRelacion);
+		variable.set(nuevoObjetoDeMiClase,find2(clazz,idRelacion));
+	}
 }
+

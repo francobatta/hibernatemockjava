@@ -40,7 +40,11 @@ public class main
 		List<Usuario_rejemplo> lista;
 		try
 		{
-			lista = implementaciones.findAll(Usuario_rejemplo.class);
+			// Esto anda 
+			lista = implementaciones.findAll2(Usuario_rejemplo.class);
+			System.out.println(lista.get(0).getClass().getSimpleName());
+			p = implementaciones.find2(Persona.class,1);
+			System.out.println(p.getDireccion());
 			
 		}
 		catch(ClassNotFoundException e)

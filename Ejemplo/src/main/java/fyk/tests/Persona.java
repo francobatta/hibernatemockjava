@@ -20,6 +20,9 @@ private String direccion;
 @Column(name="fecha_alta")
 private Date fechaAlta;
 
+public String getDireccion(){
+	return direccion;
+}
 public Persona(){}
 // otros constructores, setters y getters
 }
