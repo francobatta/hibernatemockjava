@@ -131,6 +131,9 @@ public class implementaciones
 		} else if (int.class == tipo) {
 			variable.setInt(nuevoObjetoDeMiClase,rs.getInt(nombreVariable));
 		}
+		 else if (java.sql.Date.class == tipo) {
+				variable.set(nuevoObjetoDeMiClase,rs.getDate(nombreVariable));
+		}
 	}
 	private static String darNombre(Field variable)
 	{
@@ -223,6 +226,13 @@ public class implementaciones
 	    conn.close();
 		return lista;
 	}
+	public static <T> T queryForSingleRow(Class<T> dtoClass,String xql,Object ...args) throws ClassNotFoundException, SQLException, IOException{
+		List<T> lista =query(dtoClass,xql,args);
+		if(lista.isEmpty())
+			return null;
+		else
+			return lista.get(0);
+	}
 	public static <T> T find2(Class<T> instancia, Object id) throws ClassNotFoundException, SQLException, IOException{
 		String nombreDeLaTabla = obtenerNombreTabla(instancia); // obtiene el nombre de la clase (tabla) en String
 		Field clave = obtenerCampoId(instancia); // obtiene cual es el campo que contiene la clave
@@ -256,7 +266,7 @@ public class implementaciones
 		//Importante el orden
 		
 	}
-	//el transaction trans es por ahora hay que hacerlo global estatico puede ser con singleton
+	//We are going to lear jiava lenguage
 	public static int insert(Object p) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException{
 		String nombreDeLaTabla = obtenerNombreTabla(p.getClass());
 		String xql=String.format("INSERT INTO %s ",nombreDeLaTabla);
@@ -275,10 +285,14 @@ public class implementaciones
 			String nombreGetter = nombreVariable.substring(0, 1).toUpperCase() + nombreVariable.substring(1); 
 			Method getter = p.getClass().getMethod("get"+nombreGetter);	
 			if(variable.isAnnotationPresent(Column.class)){
-				if(!nombres.isEmpty())
-					formato="%s,%s";
-				nombres=String.format(formato,nombres,darNombre(variable));
-				valores=String.format(formato,valores,getter.invoke(p));
+				if(variable.isAnnotationPresent(Id.class)&&variable.getAnnotation(Id.class).strategy()==0){
+				}
+				else{
+					if(!nombres.isEmpty())
+						formato="%s,%s";
+					nombres=String.format(formato,nombres,darNombre(variable));
+					valores=String.format(formato,valores,getter.invoke(p));
+				}
 			}
 		}
 		valores=prepararValores(valores);
@@ -293,6 +307,13 @@ public class implementaciones
 	public static String prepararValores(String valores){
 		valores=valores.replaceAll(",", "','");
 		return String.format("('%s') ",valores);
+	}
+	int insertIfNotExists(Object objetito,String xql,Object ...args) throws ClassNotFoundException, SQLException, IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		if(queryForSingleRow(objetito.getClass(),xql,args)!=null){
+			return 0; // ya existe maesito
+		}
+		insert(objetito);
+		return 1;//mm que rico mae se inserto
 	}
 }
 //

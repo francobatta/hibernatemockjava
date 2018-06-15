@@ -25,13 +25,14 @@ public class main
         stmt.executeUpdate(hql);
         hql = "DROP TABLE TEST_PERSONA IF EXISTS";
         stmt.executeUpdate(hql);
-        hql = "CREATE TABLE Usuario_rejemplo (idUsuario int,username nvarchar(100),password nvarchar(100),id_persona int)";
+        hql = "CREATE TABLE TEST_PERSONA (id_persona int IDENTITY PRIMARY KEY,nombre nvarchar(100),direccion nvarchar(100),fecha_alta date)";
         stmt.executeUpdate(hql);
-        hql = "INSERT INTO Usuario_rejemplo (idUsuario,username,password,id_persona) VALUES ('1','miUser', 'miPass','1')";
+        hql = "INSERT INTO TEST_PERSONA (nombre,direccion,fecha_alta) VALUES ('Nombre', 'Dire','2017-12-31')";
         stmt.executeUpdate(hql);
-        hql = "CREATE TABLE TEST_PERSONA (id_persona int,nombre nvarchar(100),direccion nvarchar(100),fecha_alta date)";
+        hql = "CREATE TABLE Usuario_rejemplo (idUsuario int IDENTITY PRIMARY KEY,username nvarchar(100),password nvarchar(100),id_persona int, "+
+         " FOREIGN KEY(id_persona) REFERENCES TEST_PERSONA)";
         stmt.executeUpdate(hql);
-        hql = "INSERT INTO TEST_PERSONA (id_persona,nombre,direccion,fecha_alta) VALUES ('1','Nombre', 'Dire','2017-12-31')";
+        hql = "INSERT INTO Usuario_rejemplo (username,password,id_persona) VALUES ('miUser', 'miPass','0')";
         stmt.executeUpdate(hql);
         return;
 	}
@@ -52,8 +53,9 @@ public class main
 		implementaciones.insert(p2);
 		trans.commit();
 		
-		Persona p3 = implementaciones.find2(Persona.class,0);
+		Persona p3 = implementaciones.find2(Persona.class,1);
 		System.out.println(p3.getNombre());
+		System.out.println(p3.getFechaAlta());
 		/*try
 		{
 			
