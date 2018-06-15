@@ -281,9 +281,7 @@ public class implementaciones
 		
 		for (Field variable : listaAtributos){
 			String formato="%s%s";
-			String nombreVariable=variable.getName();
-			String nombreGetter = nombreVariable.substring(0, 1).toUpperCase() + nombreVariable.substring(1); 
-			Method getter = p.getClass().getMethod("get"+nombreGetter);	
+			Method getter=dameGetter(p,variable);
 			if(variable.isAnnotationPresent(Column.class)){
 				if(variable.isAnnotationPresent(Id.class)&&variable.getAnnotation(Id.class).strategy()==0){
 				}
@@ -292,6 +290,18 @@ public class implementaciones
 						formato="%s,%s";
 					nombres=String.format(formato,nombres,darNombre(variable));
 					valores=String.format(formato,valores,getter.invoke(p));
+				}
+			}
+			else if(variable.isAnnotationPresent(ManyToOne.class)){
+				if(variable.getAnnotation(ManyToOne.class).fetchType()==2){//2 es tipo eager
+					if(!nombres.isEmpty())
+						formato="%s,%s";
+					String campo=variable.getAnnotation(ManyToOne.class).columnName();
+					Object objetito=getter.invoke(p);
+					
+					String valor = String.format("%s",obtenerClaveForeign(objetito,campo));
+					nombres=String.format(formato,nombres,campo);
+					valores=String.format(formato,valores,valor);
 				}
 			}
 		}
@@ -304,16 +314,36 @@ public class implementaciones
 		return 1;
 		
 	}
+	public static Method dameGetter(Object p,Field variable) throws NoSuchMethodException, SecurityException{
+		String nombreVariable=variable.getName();
+		String nombreGetter = nombreVariable.substring(0, 1).toUpperCase() + nombreVariable.substring(1); 
+		return p.getClass().getMethod("get"+nombreGetter);	
+		
+	}
 	public static String prepararValores(String valores){
 		valores=valores.replaceAll(",", "','");
 		return String.format("('%s') ",valores);
 	}
-	int insertIfNotExists(Object objetito,String xql,Object ...args) throws ClassNotFoundException, SQLException, IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+	public static int insertIfNotExists(Object objetito,String xql,Object ...args) throws ClassNotFoundException, SQLException, IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
 		if(queryForSingleRow(objetito.getClass(),xql,args)!=null){
 			return 0; // ya existe maesito
 		}
 		insert(objetito);
 		return 1;//mm que rico mae se inserto
 	}
+	public static Object obtenerClaveForeign(Object p,String campo) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		Field[] fields = p.getClass().getDeclaredFields(); 
+		for (Field f : fields) 
+		{
+			f.setAccessible(true);
+			if (f.isAnnotationPresent(Column.class)&&f.getAnnotation(Column.class).name().equals(campo))
+			{
+				Method getter = dameGetter(p,f);
+				return getter.invoke(p);
+			}
+	}
+		return null;
+	}
+	
 }
 //

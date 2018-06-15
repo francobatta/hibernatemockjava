@@ -39,19 +39,26 @@ public class main
 	public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
 	{
 		creoTablas();
-		Usuario_rejemplo u = new Usuario_rejemplo();
 		Persona p = new Persona();
 		List<Usuario_rejemplo> lista;
 		
 		//otro test
 		GregorianCalendar gc = new GregorianCalendar(1996,1,1);
 		Date d = new Date(gc.getTimeInMillis());
-		Persona p2 = new Persona("Willy","Urquiza",d);
+		Persona willy = new Persona("Willy","Urquiza",d);
+		//Creo nueva instancia de actualizacion
 		Transaction trans = implementaciones.beginTransaction();
-		// el segundo parametro de insert esta de "mas" trans deberia ser global pero no se me
-		//
-		implementaciones.insert(p2);
+		implementaciones.insert(willy);
 		trans.commit();
+		//Guarde los cambios a willy con id 1
+		//Busco a willy en mi base de datos
+		willy = implementaciones.find2(Persona.class,1);
+		System.out.println(willy.getIdPersona());
+		//Creo nueva instancia de actualizacion
+		Transaction trans2 = implementaciones.beginTransaction();
+		Usuario_rejemplo usuario_tenu = new Usuario_rejemplo("tenu","hola",willy);
+		implementaciones.insert(usuario_tenu);
+		trans2.commit();
 		
 		Persona p3 = implementaciones.find2(Persona.class,1);
 		System.out.println(p3.getNombre());
