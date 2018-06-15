@@ -47,7 +47,9 @@ public class main
 		Date d = new Date(gc.getTimeInMillis());
 		Persona p2 = new Persona("Willy","Urquiza",d);
 		Transaction trans = implementaciones.beginTransaction();
-		implementaciones.insert(p2,trans);
+		// el segundo parametro de insert esta de "mas" trans deberia ser global pero no se me
+		//
+		implementaciones.insert(p2);
 		trans.commit();
 		
 		Persona p3 = implementaciones.find2(Persona.class,0);

@@ -252,16 +252,12 @@ public class implementaciones
 	}
 	//Mira esa jeva maesito
 	public static Transaction beginTransaction() throws ClassNotFoundException, SQLException, IOException{
-		Transaction trans=new Transaction();
+	return Transaction.getInstance().setConnection(hacerConexion()).desabilitarAutoCommits().hacerStatement();
 		//Importante el orden
-		trans.setConnection(hacerConexion());
-		trans.desabilitarAutoCommits();
-		trans.hacerStatement();
-		return trans;
 		
 	}
 	//el transaction trans es por ahora hay que hacerlo global estatico puede ser con singleton
-	public static int insert(Object p,Transaction trans) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException{
+	public static int insert(Object p) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException{
 		String nombreDeLaTabla = obtenerNombreTabla(p.getClass());
 		String xql=String.format("INSERT INTO %s ",nombreDeLaTabla);
 		//
@@ -288,7 +284,7 @@ public class implementaciones
 		valores=prepararValores(valores);
 		System.out.println(valores);
 		xql=String.format("%s(%s) VALUES %s",xql,nombres,valores);
-		trans.getStmt().executeUpdate(xql);
+		Transaction.getInstance().getStmt().executeUpdate(xql);
 		System.out.println(xql);
 		System.out.println("Se agrego");
 		return 1;
