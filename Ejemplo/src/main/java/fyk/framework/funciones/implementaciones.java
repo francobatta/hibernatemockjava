@@ -228,7 +228,12 @@ public class implementaciones
 		Field clave = obtenerCampoId(instancia); // obtiene cual es el campo que contiene la clave
 		String claveValor = darNombre(clave);
 		System.out.println(claveValor);
-		return query(instancia,"SELECT * FROM ? WHERE ?=?",nombreDeLaTabla,claveValor,id).get(0);
+		List<T> lista = query(instancia,"SELECT * FROM ? WHERE ?=?",nombreDeLaTabla,claveValor,id);
+		if(lista.isEmpty())
+			return null;
+		else
+			return lista.get(0);
+	
 	}
 	public static <T> List<T> findAll2(Class<T> instancia) throws ClassNotFoundException, SQLException, IOException{
 		String nombreDeLaTabla = obtenerNombreTabla(instancia);
@@ -245,5 +250,53 @@ public class implementaciones
 		System.out.println(idRelacion);
 		variable.set(nuevoObjetoDeMiClase,find2(clazz,idRelacion));
 	}
+	//Mira esa jeva maesito
+	public static Transaction beginTransaction() throws ClassNotFoundException, SQLException, IOException{
+		Transaction trans=new Transaction();
+		//Importante el orden
+		trans.setConnection(hacerConexion());
+		trans.desabilitarAutoCommits();
+		trans.hacerStatement();
+		return trans;
+		
+	}
+	//el transaction trans es por ahora hay que hacerlo global estatico puede ser con singleton
+	public static int insert(Object p,Transaction trans) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException{
+		String nombreDeLaTabla = obtenerNombreTabla(p.getClass());
+		String xql=String.format("INSERT INTO %s ",nombreDeLaTabla);
+		//
+		
+		//
+		Field[] listaAtributos = p.getClass().getDeclaredFields();
+		
+		//"INSERT INTO TEST_PERSONA (id_persona,nombre,direccion,fecha_alta) VALUES ('1','Nombre', 'Dire','2017-12-31')";
+		String nombres="";
+		String valores="";
+		
+		for (Field variable : listaAtributos){
+			String formato="%s%s";
+			String nombreVariable=variable.getName();
+			String nombreGetter = nombreVariable.substring(0, 1).toUpperCase() + nombreVariable.substring(1); 
+			Method getter = p.getClass().getMethod("get"+nombreGetter);	
+			if(variable.isAnnotationPresent(Column.class)){
+				if(!nombres.isEmpty())
+					formato="%s,%s";
+				nombres=String.format(formato,nombres,darNombre(variable));
+				valores=String.format(formato,valores,getter.invoke(p));
+			}
+		}
+		valores=prepararValores(valores);
+		System.out.println(valores);
+		xql=String.format("%s(%s) VALUES %s",xql,nombres,valores);
+		trans.getStmt().executeUpdate(xql);
+		System.out.println(xql);
+		System.out.println("Se agrego");
+		return 1;
+		
+	}
+	public static String prepararValores(String valores){
+		valores=valores.replaceAll(",", "','");
+		return String.format("('%s') ",valores);
+	}
 }
-
+//

@@ -1,9 +1,12 @@
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import fyk.framework.funciones.*;
@@ -32,32 +35,42 @@ public class main
         stmt.executeUpdate(hql);
         return;
 	}
-	public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException
+	public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
 	{
 		creoTablas();
 		Usuario_rejemplo u = new Usuario_rejemplo();
 		Persona p = new Persona();
 		List<Usuario_rejemplo> lista;
-		try
+		
+		//otro test
+		GregorianCalendar gc = new GregorianCalendar(1996,1,1);
+		Date d = new Date(gc.getTimeInMillis());
+		Persona p2 = new Persona("Willy","Urquiza",d);
+		Transaction trans = implementaciones.beginTransaction();
+		implementaciones.insert(p2,trans);
+		trans.commit();
+		
+		Persona p3 = implementaciones.find2(Persona.class,0);
+		System.out.println(p3.getNombre());
+		/*try
 		{
+			
 			// Esto anda 
 			lista = implementaciones.findAll2(Usuario_rejemplo.class);
 			System.out.println(lista.get(0).getClass().getSimpleName());
 			p = implementaciones.find2(Persona.class,1);
-			System.out.println(p.getDireccion());
+			if(p==null)
+			System.out.println("No se encontro");
+			else
+				System.out.println(p.getClass().getSimpleName());
 			
-		}
-		catch(ClassNotFoundException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		catch(SQLException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		*/
 	}
 
 }

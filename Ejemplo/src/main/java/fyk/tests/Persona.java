@@ -7,6 +7,12 @@ import pablosz.xpress.ann.*;
 @Table(name="TEST_PERSONA")
 public class Persona
 {
+public Persona(String nombre,String direccion,Date fechaAlta)
+	{
+		this.nombre=nombre;
+		this.direccion=direccion;
+		this.fechaAlta=fechaAlta;
+	}
 @Id(strategy=Id.IDENTITY)
 @Column(name="id_persona")
 private int idPersona;
@@ -22,6 +28,15 @@ private Date fechaAlta;
 
 public String getDireccion(){
 	return direccion;
+}
+public Date getFechaAlta(){
+	return fechaAlta;
+}
+public String getNombre(){
+	return nombre;
+}
+public int getIdPersona(){
+	return idPersona;
 }
 public Persona(){}
 // otros constructores, setters y getters
