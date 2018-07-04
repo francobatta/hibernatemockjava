@@ -344,6 +344,51 @@ public class implementaciones
 	}
 		return null;
 	}
+	public static Object dameId(Object p) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		Field[] fields = p.getClass().getDeclaredFields(); 
+		for (Field f : fields) 
+		{
+			f.setAccessible(true);
+			if (f.isAnnotationPresent(Id.class))
+			{
+				Method getter = dameGetter(p,f);
+				return getter.invoke(p);
+			}
+	}
+		return null;
+	}
 	
+
+public static <T> void delete(Class<T> instancia,Object id) throws SQLException{
+	String nombreDeLaTabla = obtenerNombreTabla(instancia);
+	Field clave = obtenerCampoId(instancia);
+	String claveValor = darNombre(clave);
+	String xql=String.format("DELETE FROM %s WHERE %s = %s",nombreDeLaTabla,claveValor,id);
+	System.out.println(xql);
+	Transaction.getInstance().getStmt().executeUpdate(xql);
+}
+public static <T> void update(Object p) throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+	System.out.println("hola");
+	String nombreDeLaTabla = obtenerNombreTabla(p.getClass());
+	Field clave = obtenerCampoId(p.getClass());
+	String claveValor = darNombre(clave);
+	Object id = dameId(p);
+	String xql="";
+	
+	Field[] fields = p.getClass().getDeclaredFields(); 
+	for (Field f : fields) {
+		if (f.isAnnotationPresent(Column.class)){
+			Method getter = dameGetter(p,f);
+			String nombreColumna = f.getAnnotation(Column.class).name();
+			Type tipo = f.getGenericType();
+			if(String.class==tipo)
+				xql=String.format("UPDATE %s SET %s = '%s' WHERE %s = %s",nombreDeLaTabla,nombreColumna,getter.invoke(p),claveValor,id);
+			else
+				xql=String.format("UPDATE %s SET %s = %s WHERE %s = %s",nombreDeLaTabla,nombreColumna,getter.invoke(p),claveValor,id);
+			System.out.println(xql);
+			Transaction.getInstance().getStmt().executeUpdate(xql);
+		}
+}
+}
 }
 //

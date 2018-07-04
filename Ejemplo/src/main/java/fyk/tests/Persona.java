@@ -38,6 +38,9 @@ public String getNombre(){
 public int getIdPersona(){
 	return idPersona;
 }
+public void setNombre(String nombre){
+	this.nombre=nombre;
+}
 public Persona(){}
 // otros constructores, setters y getters
 }

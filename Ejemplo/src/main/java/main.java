@@ -59,10 +59,18 @@ public class main
 		Usuario_rejemplo usuario_tenu = new Usuario_rejemplo("tenu","hola",willy);
 		implementaciones.insert(usuario_tenu);
 		trans2.commit();
-		
+		Transaction trans3 = implementaciones.beginTransaction();
+		implementaciones.delete(Usuario_rejemplo.class,1);
+		trans3.commit();
+		Transaction trans4 = implementaciones.beginTransaction();
+		willy = implementaciones.find2(Persona.class,1);
+		willy.setNombre("Cocodrilo");
+		implementaciones.update(willy);
+		trans4.commit();
 		Persona p3 = implementaciones.find2(Persona.class,1);
 		System.out.println(p3.getNombre());
 		System.out.println(p3.getFechaAlta());
+		System.out.println(p3.getNombre());
 		/*try
 		{
 			
