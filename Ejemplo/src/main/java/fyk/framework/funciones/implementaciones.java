@@ -368,7 +368,7 @@ public static <T> void delete(Class<T> instancia,Object id) throws SQLException{
 	Transaction.getInstance().getStmt().executeUpdate(xql);
 }
 public static <T> void update(Object p) throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
-	System.out.println("hola");
+	
 	String nombreDeLaTabla = obtenerNombreTabla(p.getClass());
 	Field clave = obtenerCampoId(p.getClass());
 	String claveValor = darNombre(clave);
@@ -383,8 +383,12 @@ public static <T> void update(Object p) throws SQLException, NoSuchMethodExcepti
 			Type tipo = f.getGenericType();
 			if(String.class==tipo)
 				xql=String.format("UPDATE %s SET %s = '%s' WHERE %s = %s",nombreDeLaTabla,nombreColumna,getter.invoke(p),claveValor,id);
+			 else if (java.sql.Date.class ==tipo) {
+				 //
+			}
 			else
 				xql=String.format("UPDATE %s SET %s = %s WHERE %s = %s",nombreDeLaTabla,nombreColumna,getter.invoke(p),claveValor,id);
+
 			System.out.println(xql);
 			Transaction.getInstance().getStmt().executeUpdate(xql);
 		}
