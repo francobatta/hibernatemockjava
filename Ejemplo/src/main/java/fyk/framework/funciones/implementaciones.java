@@ -35,7 +35,12 @@ public class implementaciones
 		// creacion del objeto nuevo:
         try {
       		Constructor<T> constructorSinParametros = instancia.getConstructor(); // agarra constructor	
-      		T nuevoObjetoDeMiClase= constructorSinParametros.newInstance(); // instancia el objeto a partir de constructor
+      		MiInterceptor interceptor = new MiInterceptor();
+			Enhancer objetoMejorado = new Enhancer();
+			objetoMejorado.setSuperclass(instancia);
+			objetoMejorado.setCallback(interceptor);
+			T nuevoObjetoDeMiClase = (T) objetoMejorado.create();
+			//nuevoObjetoDeMiClase = constructorSinParametros.newInstance(); // instancia el objeto a partir de constructor
       		Annotation[] annotations = instancia.getAnnotations();
       		
       		Field[] listaAtributos = instancia.getDeclaredFields(); // array de atributos
@@ -51,8 +56,6 @@ public class implementaciones
        				//Pregunto si el ManyToOneEsEager
        				if(variable.getAnnotation(ManyToOne.class).fetchType()==2)
        					obtenerValorManyToOne(rs,nuevoObjetoDeMiClase,variable);  
-       				if(variable.getAnnotation(ManyToOne.class).fetchType()==1)
-       					algo;
        		}
        		
 	      rs.close();
@@ -140,7 +143,7 @@ public class implementaciones
 				variable.set(nuevoObjetoDeMiClase,rs.getDate(nombreVariable));
 		}
 	}
-	private static String darNombre(Field variable)
+	static String darNombre(Field variable)
 	{
 		String nombreVariable;
 		variable.setAccessible(true);
@@ -362,7 +365,19 @@ public class implementaciones
 	}
 		return null;
 	}
-	
+
+	public static <T> String dameNombreClaveForanea(Class<T> p){
+		Field[] fields = p.getDeclaredFields(); 
+		for (Field f : fields) 
+		{
+			f.setAccessible(true);
+			if (f.isAnnotationPresent(Id.class))
+			{
+				return f.getAnnotation(Column.class).name();
+			}
+	}
+		return null;
+	}
 
 public static <T> void delete(Class<T> instancia,Object id) throws SQLException{
 	String nombreDeLaTabla = obtenerNombreTabla(instancia);
