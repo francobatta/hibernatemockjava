@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.jar.Attributes.Name;
 
 import fyk.tests.Persona;
+import net.sf.cglib.proxy.Enhancer;
 import pablosz.xpress.util.*;
 
 import pablosz.xpress.ann.*;
@@ -41,13 +42,17 @@ public class implementaciones
        		rs.next();
 			// mapear los resultados del SQL al objeto creado y retornarlo...
        		// este metodo de aca agarra cada atributo y dice que ese atributo en el objeto nuevo va a tener el valor sql:
+
+
        		for (Field variable : listaAtributos) {System.out.println("Itero sobre lista de atributos");
        			if(variable.isAnnotationPresent(Column.class))
        				obtenerValorColumn(rs,nuevoObjetoDeMiClase,variable);
        			if(variable.isAnnotationPresent(ManyToOne.class))
        				//Pregunto si el ManyToOneEsEager
        				if(variable.getAnnotation(ManyToOne.class).fetchType()==2)
-       					obtenerValorManyToOne(rs,nuevoObjetoDeMiClase,variable);       				
+       					obtenerValorManyToOne(rs,nuevoObjetoDeMiClase,variable);  
+       				if(variable.getAnnotation(ManyToOne.class).fetchType()==1)
+       					algo;
        		}
        		
 	      rs.close();
