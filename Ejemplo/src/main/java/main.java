@@ -38,7 +38,7 @@ public class main
 	}
 	public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException
 	{
-		creoTablas();
+		//creoTablas();
 		Persona p = new Persona();
 		List<Usuario_rejemplo> lista;
 		

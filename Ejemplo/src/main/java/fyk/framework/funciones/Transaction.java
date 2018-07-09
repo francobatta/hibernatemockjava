@@ -9,22 +9,22 @@ public class Transaction
 		public static Transaction trans;
 		Connection conn;
 		Statement stmt;
-		Transaction setConnection(Connection conexion){
+		public Transaction setConnection(Connection conexion){
 			conn=conexion;
 			return trans;
 		}
-		Transaction desabilitarAutoCommits() throws SQLException{
+		public Transaction desabilitarAutoCommits() throws SQLException{
 			conn.setAutoCommit(false);
 			return trans;
 		}
-		Transaction hacerStatement() throws SQLException{
+		public Transaction hacerStatement() throws SQLException{
 			stmt=conn.createStatement();
 			return trans;
 		}
-		Connection getConn(){
+		public Connection getConn(){
 			return conn;
 		}
-		Statement getStmt(){
+		public Statement getStmt(){
 			return stmt;
 		}
 		public void commit() throws SQLException{

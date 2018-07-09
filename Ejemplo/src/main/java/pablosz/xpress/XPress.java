@@ -1,4 +1,4 @@
-package fyk.framework.funciones;
+package pablosz.xpress;
 
 import java.io.*;
 import java.lang.annotation.Annotation;
@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.jar.Attributes.Name;
 
+import fyk.framework.funciones.MiInterceptor;
+import fyk.framework.funciones.Transaction;
 import fyk.tests.Persona;
 import net.sf.cglib.proxy.Enhancer;
 import pablosz.xpress.util.*;
 
 import pablosz.xpress.ann.*;
-public class implementaciones
+public class XPress
 {
 	
 	// funcion que retorna una instancia de T si se encuentra en la fila buscada
