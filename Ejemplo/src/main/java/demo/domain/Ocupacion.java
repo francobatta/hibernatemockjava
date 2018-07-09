@@ -8,13 +8,13 @@ import pablosz.xpress.ann.*;
 public class Ocupacion
 {
 	@Id(strategy=Id.IDENTITY)
-	@Column//(name="id_ocupacion")
+	@Column(name="id_ocupacion")
 	private Integer idOcupacion;
 	
-	@Column//(name="descripcion")
+	@Column(name="descripcion")
 	private String descripcion;
 	
-	@Column//(name="id_tipoocupacion")
+	@Column(name="id_tipoocupacion")
 	public TipoOcupacion tipoOcupacion;
 
 	@OneToMany(mappedBy="ocupacion")

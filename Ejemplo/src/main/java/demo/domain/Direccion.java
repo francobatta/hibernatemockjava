@@ -8,13 +8,13 @@ import pablosz.xpress.ann.*;
 public class Direccion
 {
 	@Id(strategy=Id.IDENTITY)
-	@Column//(name="id_direccion")
+	@Column(name="id_direccion")
 	private Integer idDireccion;
 
-	@Column//(name="calle")
+	@Column(name="calle")
 	private String calle;
 
-	@Column//(name="numero")
+	@Column(name="numero")
 	private Integer numero;
 	
 	@OneToMany(mappedBy="direccion")

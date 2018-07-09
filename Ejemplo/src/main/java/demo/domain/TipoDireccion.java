@@ -8,10 +8,10 @@ import pablosz.xpress.ann.Table;
 public class TipoDireccion
 {
 	@Id(strategy=Id.IDENTITY)
-	@Column//(name="id_tipo_direccion")
+	@Column(name="id_tipo_direccion")
 	private Integer idTipoDireccion;
 	
-	@Column//(name="descripcion")
+	@Column(name="descripcion")
 	private String descripcion;
 
 	public Integer getIdTipoDireccion()

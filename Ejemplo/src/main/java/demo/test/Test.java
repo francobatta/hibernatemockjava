@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.junit.Assert;
+import org.junit.*;
 
 import demo.domain.Direccion;
 import demo.domain.Ocupacion;
@@ -16,12 +16,39 @@ import pablosz.xpress.XPress;
 
 public class Test
 {
+	Persona p;
+	@Before
+	public void init() throws ClassNotFoundException, SQLException, IOException {
+		p = XPress.find2(Persona.class,12);
+	}
 	@org.junit.Test
-	public void testFind() throws ClassNotFoundException, SQLException, IOException
+	public void elNombreEsCorrecto(){
+		Assert.assertEquals(p.getNombre(),"Pablo");
+	}
+	
+	@org.junit.Test
+	public void estaEnLazy(){
+		Assert.assertNull(p.ocupacion);
+	}
+	@org.junit.Test
+	public void elObjetoEsNoNulo(){
+		Ocupacion o = p.getOcupacion();
+		Assert.assertNotNull(o);
+	}
+	
+	@org.junit.Test
+	public void laOcupacionEsCorrecta(){
+		Assert.assertEquals((Integer)p.getOcupacion().getIdOcupacion(),(Integer)4);
+	}
+	@org.junit.Test
+	public void verificoQueLoHayaTraidoBien(){
+		Assert.assertEquals(p.getOcupacion().getDescripcion(),"Ingeniero");
+	}
+	//@org.junit.Test
+	/*public void testFind() throws ClassNotFoundException, SQLException, IOException
 	{
 		
 		// verifico el find
-		Persona p = XPress.find(Persona.class,12);
 		Assert.assertEquals(p.getNombre(),"Pablo");
 		Assert.assertEquals((Integer)p.getOcupacion().getIdOcupacion(),(Integer)4);
 
@@ -40,6 +67,7 @@ public class Test
 		TipoOcupacion to = o.getTipoOcupacion();
 		
 		// verifico que venga bien...
+		 TipoOcupacion to = o.getTipoOcupacion();
 		Assert.assertEquals(to.getDescripcion(),"Profesional");
 		
 		// -- Relation --
@@ -65,4 +93,5 @@ public class Test
 		}
 		
 	}
+	*/
 }

@@ -8,7 +8,7 @@ import pablosz.xpress.ann.*;
 public class Persona
 {
 	@Id(strategy=Id.IDENTITY)
-	@Column//(name="id_persona")
+	@Column(name="id_persona")
 	private Integer idPersona;
 	
 	@Column

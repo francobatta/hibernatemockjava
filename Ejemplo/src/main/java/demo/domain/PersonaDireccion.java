@@ -11,13 +11,13 @@ public class PersonaDireccion
 	@Column(name="id_persona_direccion")
 	private Integer idPersonaDireccion;
 	
-	@Column//(name="id_persona")
+	@Column(name="id_persona")
 	private Persona persona;
 
-	@Column//(name="id_direccion")
+	@Column(name="id_direccion")
 	private Direccion direccion;
 	
-	@Column//(name="id_tipo_direccion")
+	@Column(name="id_tipo_direccion")
 	private TipoDireccion tipoDireccion;
 	
 	public TipoDireccion getTipoDireccion()

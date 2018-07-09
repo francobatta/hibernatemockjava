@@ -11,7 +11,7 @@ public class TipoOcupacion
 	@Column(name="id_tipoocupacion")
 	private Integer idTipoOcupacion;
 
-	@Column//(name="descripcion")
+	@Column(name="descripcion")
 	private String descripcion;
 	
 	public Integer getIdTipoOcupacion()
