@@ -1,4 +1,4 @@
-package fyk.framework.funciones;
+package pablosz.xpress.util;
 
 import java.sql.Connection;
 import java.sql.SQLException;

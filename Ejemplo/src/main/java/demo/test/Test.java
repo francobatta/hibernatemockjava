@@ -1,118 +1,94 @@
 package demo.test;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.junit.*;
+import org.junit.Assert;
 
-import demo.domain.Direccion;
-import demo.domain.Ocupacion;
-import demo.domain.Persona;
-import demo.domain.PersonaDireccion;
-import demo.domain.TipoOcupacion;
-import pablosz.xpress.XPress;
 
+import pablosz.xpress.*;
+import pablosz.xpress.util.Transaction;
+import demo.domain.*;
 public class Test
 {
-	Persona p;
-	@Before
-	public void init() throws ClassNotFoundException, SQLException, IOException {
-		p = XPress.find(Persona.class,12);
-	}
 	@org.junit.Test
-	public void elNombreEsCorrecto(){
+	public void testFind() throws IOException,SQLException,InvocationTargetException,NoSuchMethodException,InstantiationException,IllegalAccessException, ClassNotFoundException
+	{
+		// verifico el find
+		Persona p = XPress.find(Persona.class,12);
 		Assert.assertEquals(p.getNombre(),"Pablo");
-	}
-	@org.junit.Test
-	public void estaEnLazy(){
+
+		// ocupacion es LAZY => debe permanecer NULL hasta que haga el get
 		Assert.assertNull(p.ocupacion);
-	}
-	@org.junit.Test
-	public void elObjetoEsNoNulo(){
-		Ocupacion o = p.getOcupacion();
+
+		// debe traer el objeto
+		Ocupacion o=p.getOcupacion();
 		Assert.assertNotNull(o);
-	}
-	@org.junit.Test
-	public void getid(){
-		Assert.assertEquals((int)p.getIdPersona(),12);
-	}
-	@org.junit.Test
-	public void laOcupacionEsCorrecta(){
-		Assert.assertEquals((Integer)p.getOcupacion().getIdOcupacion(),(Integer)4);
-	}
-	@org.junit.Test
-	public void descripcionDeLaOcupacionesIngeniero(){
-		Assert.assertEquals(p.getOcupacion().getDescripcion(),"Ingeniero");
-	}
-	@org.junit.Test
-	public void elNombreDeLaPersonaEsPablo(){
-		Assert.assertEquals(p.getNombre(),"Pablo");
-	}
-	@org.junit.Test
-	public void elIdOcupacionEs4(){
-		Assert.assertEquals((Integer)p.getOcupacion().getIdOcupacion(),(Integer)4);;
-	}
-	@org.junit.Test
-	public void verificoOcupacionLazyNull(){
-		// la operacion es LAZY => debe permanecer en NULL
-		Assert.assertNull(p.ocupacion);
-	}
-	@org.junit.Test
-	public void traigoOcupacionLazyYverifico(){
-		// me traigo el lazy
-		Ocupacion o = p.getOcupacion();
-		Assert.assertNotNull(o);
-	}
-	@org.junit.Test
-	public void verificoValorDeOcupacionLazyTraida(){
-		// me traigo el lazy
-		Ocupacion o = p.getOcupacion();
-		Assert.assertNotNull(o);
+
+		// verifico que lo haya traido bien
 		Assert.assertEquals(o.getDescripcion(),"Ingeniero");
-	}
-	@org.junit.Test
-	public void ocupacionEagerNoNull(){
-		// tipoOcupacion es eager, ya tiene que andar
-		Ocupacion o = p.getOcupacion();
+		Assert.assertEquals((Integer)p.getOcupacion().getIdOcupacion(),(Integer)4);
+
+		// tipoOcupacion (por default) es EAGER => no debe ser null
 		Assert.assertNotNull(o.getTipoOcupacion());
-	}
-	@org.junit.Test
-	public void descripcionTipoOcupacionEagerEsProfesional(){
-		// tipoOcupacion es eager, ya tiene que andar
-		Ocupacion o = p.getOcupacion();
-		TipoOcupacion to = o.getTipoOcupacion();
+		TipoOcupacion to=o.getTipoOcupacion();
+
+		// verifico que venga bien...
 		Assert.assertEquals(to.getDescripcion(),"Profesional");
-	}
-	@org.junit.Test
-	public void relacionesNullLazy(){
+
+		// -- Relation --
+
 		// las relaciones son LAZY si o si!
 		Assert.assertNull(p.direcciones);
-	}
-	@org.junit.Test
-	public void traigoListaOneToMany(){
-		List<PersonaDireccion> dirs = p.getDirecciones();
-		Assert.assertNotNull(dirs);
-	}	
-	@org.junit.Test
-	public void listaOneToManyTiene2Elementos(){
-		List<PersonaDireccion> dirs = p.getDirecciones();
-		Assert.assertEquals(dirs.size(),2);
-	}	
 
-	@org.junit.Test
-	public void miroTodasLasDirecciones() throws ClassNotFoundException, SQLException, IOException
-	{		
-		List<PersonaDireccion> dirs = p.getDirecciones();
+		List<PersonaDireccion> dirs=p.getDirecciones();
+		Assert.assertNotNull(dirs);
+
+		// debe tener 2 elementos
+		Assert.assertEquals(dirs.size(),2);
+
 		for(PersonaDireccion pd:dirs)
 		{
-			Persona p1 = pd.getPersona();
-			Direccion d = pd.getDireccion();
+			Persona p1=pd.getPersona();
+			Direccion d=pd.getDireccion();
+
 			Assert.assertNotNull(p1);
 			Assert.assertNotNull(d);
+
 			Assert.assertEquals(p1.getNombre(),p.getNombre());
 		}
+
+	}
+
+	@org.junit.Test
+	public void testFindAll() throws IllegalAccessException,InstantiationException,NoSuchMethodException,InvocationTargetException,SQLException,IOException,IllegalArgumentException,
+			NoSuchFieldException,ClassNotFoundException
+	{
+		 List<Persona> lst = XPress.findAll(Persona.class);
+		 for(Persona p : lst) {
+		 System.out.println(p);
+		}
+		Ocupacion o=new Ocupacion();
+		o.setIdOcupacion(7);
+		o.setDescripcion("Estudiante");
+
+		Persona p=new Persona();
+		p.setIdPersona(22);
+		p.setNombre("PabloTest");
+		p.setOcupacion(o);
+		Transaction trans = XPress.beginTransaction();
+		int i=XPress.insert(p);
+		trans.commit();
+		System.out.println("Se inserto "+i+" registros");
 		
+		p.setNombre("Julian");
+		//i=XPress.update(p);
+		//System.out.println("Se actualizo "+i+" registros");
+
+		//i=XPress.delete(Persona.class,22);
+		//System.out.println("Se elimino "+i+" registros");
 	}
 }

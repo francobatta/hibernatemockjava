@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.jar.Attributes.Name;
 
-import fyk.framework.funciones.MiInterceptor;
-import fyk.framework.funciones.Transaction;
-import fyk.tests.Persona;
 import net.sf.cglib.proxy.Enhancer;
 import pablosz.xpress.util.*;
 
