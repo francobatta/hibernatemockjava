@@ -433,20 +433,25 @@ public static <T> void delete(Class<T> instancia,Object id) throws SQLException{
 	System.out.println(xql);
 	Transaction.getInstance().getStmt().executeUpdate(xql);
 }
-public static <T> void update(Object p) throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+public static <T> int update(Object p) throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 	
 	String nombreDeLaTabla = obtenerNombreTabla(p.getClass());
 	Field clave = obtenerCampoId(p.getClass());
 	String claveValor = darNombre(clave);
 	Object id = dameId(p);
 	String xql="";
-	
+	int cuantosCambie = 0;
 	Field[] fields = p.getClass().getDeclaredFields(); 
 	for (Field f : fields) {
 		if (f.isAnnotationPresent(Column.class)){
+			String nombreColumna = "ASDASDASDASDs";
 			Method getter = dameGetter(p.getClass(),f);
-			String nombreColumna = f.getAnnotation(Column.class).name();
+			if(!f.getAnnotation(Column.class).name().equals(""))
+				{nombreColumna = f.getAnnotation(Column.class).name();}
+			else
+				{nombreColumna = f.getName();}
 			Type tipo = f.getGenericType();
+			if(esPrimitivo(f)) {
 			if(String.class==tipo)
 				xql=String.format("UPDATE %s SET %s = '%s' WHERE %s = %s",nombreDeLaTabla,nombreColumna,getter.invoke(p),claveValor,id);
 			 else if (java.sql.Date.class ==tipo) {
@@ -454,11 +459,20 @@ public static <T> void update(Object p) throws SQLException, NoSuchMethodExcepti
 			}
 			else
 				xql=String.format("UPDATE %s SET %s = %s WHERE %s = %s",nombreDeLaTabla,nombreColumna,getter.invoke(p),claveValor,id);
-
+			}
+			else // su entrada es compuesta usted me entiende
+			{  
+			    Object miObjetito = f.get(p);
+				update(miObjetito);
+				cuantosCambie++;
+			}
+			System.out.println(nombreColumna);
 			System.out.println(xql);
 			Transaction.getInstance().getStmt().executeUpdate(xql);
+			cuantosCambie++;
 		}
 }
+	return cuantosCambie;
 }
 }
 //

@@ -79,14 +79,16 @@ public class Test
 		p.setIdPersona(22);
 		p.setNombre("PabloTest");
 		p.setOcupacion(o);
-		Transaction trans = XPress.beginTransaction();
-		int i=XPress.insert(p);
-		trans.commit();
-		System.out.println("Se inserto "+i+" registros");
+		//Transaction trans = XPress.beginTransaction();
+		//int i=XPress.insert(p);
+		//trans.commit();
+		//System.out.println("Se inserto "+i+" registros");
 		
 		p.setNombre("Julian");
-		//i=XPress.update(p);
-		//System.out.println("Se actualizo "+i+" registros");
+		Transaction trans = XPress.beginTransaction();
+		int i=XPress.update(p);
+		trans.commit();
+		System.out.println("Se actualizo "+i+" registros");
 
 		//i=XPress.delete(Persona.class,22);
 		//System.out.println("Se elimino "+i+" registros");
