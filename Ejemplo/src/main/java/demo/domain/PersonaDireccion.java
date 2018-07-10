@@ -2,6 +2,7 @@ package demo.domain;
 
 import pablosz.xpress.ann.Column;
 import pablosz.xpress.ann.Id;
+import pablosz.xpress.ann.ManyToOne;
 import pablosz.xpress.ann.Table;
 
 @Table(name="persona_direccion")
@@ -11,13 +12,13 @@ public class PersonaDireccion
 	@Column(name="id_persona_direccion")
 	public int idPersonaDireccion;
 	
-	@Column(name="id_persona")
+	@ManyToOne(columnName="id_persona")
 	public Persona persona;
-
-	@Column(name="id_direccion")
+	
+	@ManyToOne(columnName="id_direccion")
 	public Direccion direccion;
 	
-	@Column(name="id_tipo_direccion")
+	@ManyToOne(columnName="id_tipo_direccion")
 	public TipoDireccion tipoDireccion;
 	
 	public TipoDireccion getTipoDireccion()
@@ -30,12 +31,12 @@ public class PersonaDireccion
 		this.tipoDireccion=tipoDireccion;
 	}
 
-	public Integer getIdPersonaDireccion()
+	public int getIdPersonaDireccion()
 	{
 		return idPersonaDireccion;
 	}
 
-	public void setIdPersonaDireccion(Integer idPersonaDireccion)
+	public void setIdPersonaDireccion(int idPersonaDireccion)
 	{
 		this.idPersonaDireccion=idPersonaDireccion;
 	}
@@ -64,7 +65,7 @@ public class PersonaDireccion
 	public boolean equals(Object o)
 	{
 		PersonaDireccion other = (PersonaDireccion)o;		
-		return other.getIdPersonaDireccion().equals(getIdPersonaDireccion())
+		return other.getIdPersonaDireccion()==this.getIdPersonaDireccion()
 			&& other.getPersona().equals(getPersona())
 			&& other.getDireccion().equals(getDireccion());
 	}	

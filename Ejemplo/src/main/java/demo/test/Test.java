@@ -100,6 +100,7 @@ public class Test
 		List<PersonaDireccion> dirs = p.getDirecciones();
 		Assert.assertEquals(dirs.size(),2);
 	}	
+
 	@org.junit.Test
 	public void miroTodasLasDirecciones() throws ClassNotFoundException, SQLException, IOException
 	{		
