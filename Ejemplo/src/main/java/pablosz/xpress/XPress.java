@@ -140,7 +140,7 @@ public class XPress
 			variable.set(nuevoObjetoDeMiClase,rs.getString(nombreVariable));
 		} else if (int.class == tipo) {
 			variable.setInt(nuevoObjetoDeMiClase,rs.getInt(nombreVariable));
-		}
+		} 
 		 else if (java.sql.Date.class == tipo) {
 				variable.set(nuevoObjetoDeMiClase,rs.getDate(nombreVariable));
 		}

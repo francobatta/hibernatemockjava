@@ -9,7 +9,7 @@ public class Ocupacion
 {
 	@Id(strategy=Id.IDENTITY)
 	@Column(name="id_ocupacion")
-	private Integer idOcupacion;
+	private int idOcupacion;
 	
 	@Column(name="descripcion")
 	private String descripcion;
@@ -30,12 +30,12 @@ public class Ocupacion
 		this.personas=personas;
 	}
 
-	public Integer getIdOcupacion()
+	public int getIdOcupacion()
 	{
 		return idOcupacion;
 	}
 
-	public void setIdOcupacion(Integer idOcupacion)
+	public void setIdOcupacion(int idOcupacion)
 	{
 		this.idOcupacion=idOcupacion;
 	}
@@ -70,7 +70,7 @@ public class Ocupacion
 	public boolean equals(Object o)
 	{
 		Ocupacion other = (Ocupacion)o;		
-		return other.getIdOcupacion().equals(idOcupacion)
+		return other.getIdOcupacion()==this.getIdOcupacion()
 			&& other.getDescripcion().equals(getDescripcion())
 			&& other.getTipoOcupacion().equals(getTipoOcupacion());
 	}	

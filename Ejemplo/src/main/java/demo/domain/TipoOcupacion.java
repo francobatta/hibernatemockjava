@@ -14,12 +14,12 @@ public class TipoOcupacion
 	@Column(name="descripcion")
 	private String descripcion;
 	
-	public Integer getIdTipoOcupacion()
+	public int getIdTipoOcupacion()
 	{
 		return idTipoOcupacion;
 	}
 
-	public void setIdTipoOcupacion(Integer idTipoOcupacion)
+	public void setIdTipoOcupacion(int idTipoOcupacion)
 	{
 		this.idTipoOcupacion=idTipoOcupacion;
 	}
@@ -44,7 +44,7 @@ public class TipoOcupacion
 	public boolean equals(Object obj)
 	{
 		TipoOcupacion other=(TipoOcupacion)obj;
-		return other.getIdTipoOcupacion().equals(getIdTipoOcupacion())
+		return other.getIdTipoOcupacion()==this.getIdTipoOcupacion()
 			&& other.getDescripcion().equals(getDescripcion());
 	}
 	

@@ -9,17 +9,17 @@ public class TipoDireccion
 {
 	@Id(strategy=Id.IDENTITY)
 	@Column(name="id_tipo_direccion")
-	private Integer idTipoDireccion;
+	private int idTipoDireccion;
 	
 	@Column(name="descripcion")
 	private String descripcion;
 
-	public Integer getIdTipoDireccion()
+	public int getIdTipoDireccion()
 	{
 		return idTipoDireccion;
 	}
 
-	public void setIdTipoDireccion(Integer idTipoDireccion)
+	public void setIdTipoDireccion(int idTipoDireccion)
 	{
 		this.idTipoDireccion=idTipoDireccion;
 	}
@@ -37,7 +37,7 @@ public class TipoDireccion
 	public boolean equals(Object o)
 	{
 		TipoDireccion other = (TipoDireccion)o;
-		return other.getIdTipoDireccion().equals(getIdTipoDireccion())
+		return other.getIdTipoDireccion()==this.getIdTipoDireccion()
 			&& other.getDescripcion().equals(getDescripcion());
 	}
 	

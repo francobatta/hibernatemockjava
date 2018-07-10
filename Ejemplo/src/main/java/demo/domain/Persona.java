@@ -9,10 +9,10 @@ public class Persona
 {
 	@Id(strategy=Id.IDENTITY)
 	@Column(name="id_persona")
-	private Integer idPersona;
+	public int idPersona;
 	
 	@Column
-	private String nombre;
+	public String nombre;
 		
 	@Column(fetchType=Column.LAZY)
 	public Ocupacion ocupacion;
@@ -30,12 +30,12 @@ public class Persona
 		this.direcciones=direcciones;
 	}
 
-	public Integer getIdPersona()
+	public int getIdPersona()
 	{
 		return idPersona;
 	}
 
-	public void setIdPersona(Integer idPersona)
+	public void setIdPersona(int idPersona)
 	{
 		this.idPersona=idPersona;
 	}
@@ -64,7 +64,7 @@ public class Persona
 	public boolean equals(Object o)
 	{
 		Persona other = (Persona)o;
-		return other.getIdPersona().equals(getIdPersona())
+		return other.getIdPersona()==this.getIdPersona()
 			&& other.getNombre().equals(getNombre())
 			&& other.getOcupacion().equals(getOcupacion());
 	}

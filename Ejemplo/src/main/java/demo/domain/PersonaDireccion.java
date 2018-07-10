@@ -9,7 +9,7 @@ public class PersonaDireccion
 {
 	@Id(strategy=Id.IDENTITY)
 	@Column(name="id_persona_direccion")
-	private Integer idPersonaDireccion;
+	private int idPersonaDireccion;
 	
 	@Column(name="id_persona")
 	private Persona persona;

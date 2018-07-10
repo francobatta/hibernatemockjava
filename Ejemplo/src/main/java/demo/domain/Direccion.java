@@ -9,13 +9,13 @@ public class Direccion
 {
 	@Id(strategy=Id.IDENTITY)
 	@Column(name="id_direccion")
-	private Integer idDireccion;
+	private int idDireccion;
 
 	@Column(name="calle")
 	private String calle;
 
 	@Column(name="numero")
-	private Integer numero;
+	private int numero;
 	
 	@OneToMany(mappedBy="direccion")
 	private List<PersonaDireccion> personas;
@@ -30,12 +30,12 @@ public class Direccion
 		this.personas=personas;
 	}
 
-	public Integer getIdDireccion()
+	public int getIdDireccion()
 	{
 		return idDireccion;
 	}
 
-	public void setIdDireccion(Integer idDireccion)
+	public void setIdDireccion(int idDireccion)
 	{
 		this.idDireccion=idDireccion;
 	}
@@ -50,12 +50,12 @@ public class Direccion
 		this.calle=calle;
 	}
 
-	public Integer getNumero()
+	public int getNumero()
 	{
 		return numero;
 	}
 
-	public void setNumero(Integer numero)
+	public void setNumero(int numero)
 	{
 		this.numero=numero;
 	}
@@ -70,9 +70,9 @@ public class Direccion
 	public boolean equals(Object obj)
 	{
 		Direccion other=(Direccion)obj;
-		return other.getIdDireccion().equals(getIdDireccion())
+		return other.getIdDireccion()==this.getIdDireccion()
 			&& other.getCalle().equals(getCalle())
-			&& other.getNumero().equals(getNumero());
+			&& other.getNumero()==this.getNumero();
 	}
 
 

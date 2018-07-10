@@ -37,9 +37,7 @@ public class implementaciones
       		Constructor<T> constructorSinParametros = instancia.getConstructor(); // agarra constructor	
       		MiInterceptor interceptor = new MiInterceptor();
 			Enhancer objetoMejorado = new Enhancer();
-			objetoMejorado.setSuperclass(instancia);
-			objetoMejorado.setCallback(interceptor);
-			T nuevoObjetoDeMiClase = (T) objetoMejorado.create();
+			T nuevoObjetoDeMiClase = (T) objetoMejorado.create(instancia,interceptor);
 			//nuevoObjetoDeMiClase = constructorSinParametros.newInstance(); // instancia el objeto a partir de constructor
       		Annotation[] annotations = instancia.getAnnotations();
       		
@@ -137,6 +135,9 @@ public class implementaciones
 		if (String.class == tipo) {
 			variable.set(nuevoObjetoDeMiClase,rs.getString(nombreVariable));
 		} else if (int.class == tipo) {
+			variable.setInt(nuevoObjetoDeMiClase,rs.getInt(nombreVariable));
+		}
+		else if (Integer.class == tipo) {
 			variable.setInt(nuevoObjetoDeMiClase,rs.getInt(nombreVariable));
 		}
 		 else if (java.sql.Date.class == tipo) {
@@ -289,7 +290,7 @@ public class implementaciones
 		
 		for (Field variable : listaAtributos){
 			String formato="%s%s";
-			Method getter=dameGetter(p,variable);
+			Method getter=dameGetter(p.getClass(),variable);
 			if(variable.isAnnotationPresent(Column.class)){
 				if(variable.isAnnotationPresent(Id.class)&&variable.getAnnotation(Id.class).strategy()==0){
 				}
@@ -323,10 +324,10 @@ public class implementaciones
 		return 1;
 		
 	}
-	public static Method dameGetter(Object p,Field variable) throws NoSuchMethodException, SecurityException{
+	public static <T> Method dameGetter(Class<T> p,Field variable) throws NoSuchMethodException, SecurityException{
 		String nombreVariable=variable.getName();
 		String nombreGetter = nombreVariable.substring(0, 1).toUpperCase() + nombreVariable.substring(1); 
-		return p.getClass().getMethod("get"+nombreGetter);	
+		return p.getMethod("get"+nombreGetter);	
 		
 	}
 	public static String prepararValores(String valores){
@@ -347,7 +348,7 @@ public class implementaciones
 			f.setAccessible(true);
 			if (f.isAnnotationPresent(Column.class)&&f.getAnnotation(Column.class).name().equals(campo))
 			{
-				Method getter = dameGetter(p,f);
+				Method getter = dameGetter(p.getClass(),f);
 				return getter.invoke(p);
 			}
 	}
@@ -360,7 +361,7 @@ public class implementaciones
 			f.setAccessible(true);
 			if (f.isAnnotationPresent(Id.class))
 			{
-				Method getter = dameGetter(p,f);
+				Method getter = dameGetter(p.getClass(),f);
 				return getter.invoke(p);
 			}
 	}
@@ -399,7 +400,7 @@ public static <T> void update(Object p) throws SQLException, NoSuchMethodExcepti
 	Field[] fields = p.getClass().getDeclaredFields(); 
 	for (Field f : fields) {
 		if (f.isAnnotationPresent(Column.class)){
-			Method getter = dameGetter(p,f);
+			Method getter = dameGetter(p.getClass(),f);
 			String nombreColumna = f.getAnnotation(Column.class).name();
 			Type tipo = f.getGenericType();
 			if(String.class==tipo)

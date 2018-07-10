@@ -19,31 +19,43 @@ public class Test
 	Persona p;
 	@Before
 	public void init() throws ClassNotFoundException, SQLException, IOException {
-		p = XPress.find2(Persona.class,12);
+		p = XPress.find(Persona.class,12);
 	}
+	/*
 	@org.junit.Test
 	public void elNombreEsCorrecto(){
 		Assert.assertEquals(p.getNombre(),"Pablo");
 	}
-	
+	*/
+	/*
 	@org.junit.Test
 	public void estaEnLazy(){
 		Assert.assertNull(p.ocupacion);
 	}
+	*/
+	/*
 	@org.junit.Test
 	public void elObjetoEsNoNulo(){
 		Ocupacion o = p.getOcupacion();
 		Assert.assertNotNull(o);
 	}
-	
+	*/
+	/*
+	@org.junit.Test
+	public void getid(){
+		Assert.assertEquals((int)p.getIdPersona(),12);
+	}
+	*/
 	@org.junit.Test
 	public void laOcupacionEsCorrecta(){
 		Assert.assertEquals((Integer)p.getOcupacion().getIdOcupacion(),(Integer)4);
 	}
+	/*
 	@org.junit.Test
 	public void verificoQueLoHayaTraidoBien(){
 		Assert.assertEquals(p.getOcupacion().getDescripcion(),"Ingeniero");
 	}
+	*/
 	//@org.junit.Test
 	/*public void testFind() throws ClassNotFoundException, SQLException, IOException
 	{
