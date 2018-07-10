@@ -72,25 +72,32 @@ public class Test
 		 System.out.println(p);
 		}
 		Ocupacion o=new Ocupacion();
-		o.setIdOcupacion(7);
+		o.setIdOcupacion(1034);
 		o.setDescripcion("Estudiante");
 
 		Persona p=new Persona();
-		p.setIdPersona(22);
+		p.setIdPersona(76);
 		p.setNombre("PabloTest");
 		p.setOcupacion(o);
-		//Transaction trans = XPress.beginTransaction();
-		//int i=XPress.insert(p);
-		//trans.commit();
-		//System.out.println("Se inserto "+i+" registros");
+		// nuestra dicion
+		TipoOcupacion l = new TipoOcupacion();
+		l.setDescripcion("asdasdasd");
+		l.setIdTipoOcupacion(1006);
+		//
+		o.setTipoOcupacion(l);
+		// fin nuestra adicion
+		Transaction trans = XPress.beginTransaction();
+		int i=XPress.insert(p);
+		trans.commit();
+		System.out.println("Se inserto "+i+" registros");
 		
 		p.setNombre("Julian");
-		Transaction trans = XPress.beginTransaction();
-		int i=XPress.update(p);
-		trans.commit();
+		Transaction trans2 = XPress.beginTransaction();
+		i=XPress.update(p);
+		trans2.commit();
 		System.out.println("Se actualizo "+i+" registros");
 
-		//i=XPress.delete(Persona.class,22);
-		//System.out.println("Se elimino "+i+" registros");
+		i=XPress.delete(Persona.class,22);
+		System.out.println("Se elimino "+i+" registros");
 	}
 }

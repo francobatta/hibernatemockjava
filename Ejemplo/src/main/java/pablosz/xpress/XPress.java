@@ -295,6 +295,7 @@ public class XPress
 	}
 	//We are going to lear jiava lenguage
 	public static int insert(Object p) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException{
+		int cuantosInserte = 0;
 		String nombreDeLaTabla = obtenerNombreTabla(p.getClass());
 		String xql=String.format("INSERT INTO %s ",nombreDeLaTabla);
 		
@@ -315,27 +316,56 @@ public class XPress
 				
 				//if(variable.isAnnotationPresent(Id.class)&&variable.getAnnotation(Id.class).strategy()==0){
 				if(!esPrimitivo(variable)){
-					System.out.println("columna primitivo");
+					if(!nombres.isEmpty())
+						formato="%s,%s";
+					System.out.println("columna compuesta");
 					Object objetito=getter.invoke(p);
 					Field clave = XPress.obtenerCampoId(objetito.getClass());
 					Method miMetodo = XPress.dameGetter(objetito.getClass(),clave);
 					Object valor = miMetodo.invoke(objetito);
-					String campo=variable.getAnnotation(ManyToOne.class).columnName();
-					nombres=String.format(formato,nombres,campo);
+					String nombreColumna;
+					if(!variable.getAnnotation(Column.class).name().equals(""))
+					{nombreColumna = variable.getAnnotation(Column.class).name();}
+				else
+					{
+					Object miObjetito = variable.get(p);
+					Field campoConNombreQueQuiero = obtenerCampoId(miObjetito.getClass());
+					nombreColumna = darNombre(campoConNombreQueQuiero);
+					}
+					nombres=String.format(formato,nombres,nombreColumna);
 					valores=String.format(formato,valores,valor);
 					insert(objetito);
 				}
 				else{
-					System.out.println("columna compuesta");
-					if(!nombres.isEmpty())
-						formato="%s,%s";
-					nombres=String.format(formato,nombres,darNombre(variable));
-					valores=String.format(formato,valores,getter.invoke(p));
+					if(variable.isAnnotationPresent(Id.class)){
+						if(!nombres.isEmpty())
+							formato="%s,%s";
+						Object objetito=getter.invoke(p);
+						String campo=variable.getAnnotation(Column.class).name();
+						nombres=String.format(formato,nombres,campo);
+						valores=String.format(formato,valores,objetito);
+					}
+					else{
+						System.out.println("columna primitivo");
+						if(!nombres.isEmpty())
+							formato="%s,%s";
+						String valor=String.format("'%s'",getter.invoke(p));
+						String nombreColumna;
+						if(!variable.getAnnotation(Column.class).name().equals(""))
+						{nombreColumna = variable.getAnnotation(Column.class).name();}
+					else
+						{nombreColumna = variable.getName();}
+						nombres=String.format(formato,nombres,nombreColumna);
+						valores=String.format(formato,valores,valor);
+					}
+					
 				}
 				
 				
 			}
-			else if(variable.isAnnotationPresent(ManyToOne.class)){
+			else if(variable.isAnnotationPresent(ManyToOne.class)) {
+				if(!nombres.isEmpty())
+					formato="%s,%s";
 				System.out.println("manyToOne compuesta");
 				//if(variable.getAnnotation(ManyToOne.class).fetchType()==2){//2 es tipo eager
 					/*if(!nombres.isEmpty())
@@ -359,13 +389,14 @@ public class XPress
 				}
 			}
 		valores=prepararValores(valores);
-		System.out.println(valores);
+		//System.out.println(valores);
 		xql=String.format("%s(%s) VALUES %s",xql,nombres,valores);
 		System.out.println(xql);
+		cuantosInserte++;
 		Transaction.getInstance().getStmt().executeUpdate(xql);
-		System.out.println(xql);
+		//System.out.println(xql);
 		System.out.println("Se agrego");
-		return 1;
+		return cuantosInserte;
 		
 	}
 	public static <T> Method dameGetter(Class<T> p,Field variable) throws NoSuchMethodException, SecurityException{
@@ -375,8 +406,9 @@ public class XPress
 		
 	}
 	public static String prepararValores(String valores){
-		valores=valores.replaceAll(",", "','");
-		return String.format("('%s') ",valores);
+		//valores=valores.replaceAll(",", "','");
+		//return 
+		return String.format("(%s) ",valores);
 	}
 	public static int insertIfNotExists(Object objetito,String xql,Object ...args) throws ClassNotFoundException, SQLException, IOException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
 		if(queryForSingleRow(objetito.getClass(),xql,args)!=null){
@@ -425,13 +457,14 @@ public class XPress
 		return null;
 	}
 
-public static <T> void delete(Class<T> instancia,Object id) throws SQLException{
+public static <T> int delete(Class<T> instancia,Object id) throws SQLException{
 	String nombreDeLaTabla = obtenerNombreTabla(instancia);
 	Field clave = obtenerCampoId(instancia);
 	String claveValor = darNombre(clave);
 	String xql=String.format("DELETE FROM %s WHERE %s = %s",nombreDeLaTabla,claveValor,id);
 	System.out.println(xql);
 	Transaction.getInstance().getStmt().executeUpdate(xql);
+	return 1;
 }
 public static <T> int update(Object p) throws SQLException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 	
@@ -459,6 +492,7 @@ public static <T> int update(Object p) throws SQLException, NoSuchMethodExceptio
 			}
 			else
 				xql=String.format("UPDATE %s SET %s = %s WHERE %s = %s",nombreDeLaTabla,nombreColumna,getter.invoke(p),claveValor,id);
+			cuantosCambie++;
 			}
 			else // su entrada es compuesta usted me entiende
 			{  
@@ -469,7 +503,6 @@ public static <T> int update(Object p) throws SQLException, NoSuchMethodExceptio
 			System.out.println(nombreColumna);
 			System.out.println(xql);
 			Transaction.getInstance().getStmt().executeUpdate(xql);
-			cuantosCambie++;
 		}
 }
 	return cuantosCambie;
