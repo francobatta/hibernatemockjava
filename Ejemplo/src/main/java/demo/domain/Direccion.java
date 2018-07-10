@@ -9,16 +9,16 @@ public class Direccion
 {
 	@Id(strategy=Id.IDENTITY)
 	@Column(name="id_direccion")
-	private int idDireccion;
+	public int idDireccion;
 
 	@Column(name="calle")
-	private String calle;
+	public String calle;
 
 	@Column(name="numero")
-	private int numero;
+	public int numero;
 	
 	@OneToMany(mappedBy="direccion")
-	private List<PersonaDireccion> personas;
+	public List<PersonaDireccion> personas;
 
 	public List<PersonaDireccion> getPersonas()
 	{

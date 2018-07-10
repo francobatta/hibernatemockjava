@@ -43,58 +43,75 @@ public class Test
 		Assert.assertEquals((Integer)p.getOcupacion().getIdOcupacion(),(Integer)4);
 	}
 	@org.junit.Test
-	public void verificoQueLoHayaTraidoBien(){
+	public void descripcionDeLaOcupacionesIngeniero(){
 		Assert.assertEquals(p.getOcupacion().getDescripcion(),"Ingeniero");
 	}
-	
-	//@org.junit.Test
-	/*public void testFind() throws ClassNotFoundException, SQLException, IOException
-	{
-		
-		// verifico el find
+	@org.junit.Test
+	public void elNombreDeLaPersonaEsPablo(){
 		Assert.assertEquals(p.getNombre(),"Pablo");
-		Assert.assertEquals((Integer)p.getOcupacion().getIdOcupacion(),(Integer)4);
-
-		// ocupacion es LAZY => debe permanecer NULL hasta que haga el get
+	}
+	@org.junit.Test
+	public void elIdOcupacionEs4(){
+		Assert.assertEquals((Integer)p.getOcupacion().getIdOcupacion(),(Integer)4);;
+	}
+	@org.junit.Test
+	public void verificoOcupacionLazyNull(){
+		// la operacion es LAZY => debe permanecer en NULL
 		Assert.assertNull(p.ocupacion);
-
-		// debe traer el objeto
+	}
+	@org.junit.Test
+	public void traigoOcupacionLazyYverifico(){
+		// me traigo el lazy
 		Ocupacion o = p.getOcupacion();
 		Assert.assertNotNull(o);
-	
-		// verifico que lo haya traido bien
+	}
+	@org.junit.Test
+	public void verificoValorDeOcupacionLazyTraida(){
+		// me traigo el lazy
+		Ocupacion o = p.getOcupacion();
+		Assert.assertNotNull(o);
 		Assert.assertEquals(o.getDescripcion(),"Ingeniero");
-	
-		// tipoOcupacion (por default) es EAGER => no debe ser null
+	}
+	@org.junit.Test
+	public void ocupacionEagerNoNull(){
+		// tipoOcupacion es eager, ya tiene que andar
+		Ocupacion o = p.getOcupacion();
 		Assert.assertNotNull(o.getTipoOcupacion());
+	}
+	@org.junit.Test
+	public void descripcionTipoOcupacionEagerEsProfesional(){
+		// tipoOcupacion es eager, ya tiene que andar
+		Ocupacion o = p.getOcupacion();
 		TipoOcupacion to = o.getTipoOcupacion();
-		
-		// verifico que venga bien...
-		 TipoOcupacion to = o.getTipoOcupacion();
 		Assert.assertEquals(to.getDescripcion(),"Profesional");
-		
-		// -- Relation --
-		
+	}
+	@org.junit.Test
+	public void relacionesNullLazy(){
 		// las relaciones son LAZY si o si!
 		Assert.assertNull(p.direcciones);
-		
+	}
+	@org.junit.Test
+	public void traigoListaOneToMany(){
 		List<PersonaDireccion> dirs = p.getDirecciones();
 		Assert.assertNotNull(dirs);
-		
-		// debe tener 2 elementos
+	}	
+	@org.junit.Test
+	public void listaOneToManyTiene2Elementos(){
+		List<PersonaDireccion> dirs = p.getDirecciones();
 		Assert.assertEquals(dirs.size(),2);
-		
+	}	
+	@org.junit.Test
+	public void miroTodasLasDirecciones() throws ClassNotFoundException, SQLException, IOException
+	{		
+		List<PersonaDireccion> dirs = p.getDirecciones();
 		for(PersonaDireccion pd:dirs)
 		{
 			Persona p1 = pd.getPersona();
 			Direccion d = pd.getDireccion();
-			
 			Assert.assertNotNull(p1);
 			Assert.assertNotNull(d);
-		
 			Assert.assertEquals(p1.getNombre(),p.getNombre());
 		}
 		
 	}
-	*/
 }

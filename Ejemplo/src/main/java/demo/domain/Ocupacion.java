@@ -14,7 +14,7 @@ public class Ocupacion
 	@Column(name="descripcion")
 	public String descripcion;
 	
-	@Column(name="id_tipoocupacion")
+	@ManyToOne(columnName="id_tipoocupacion")
 	public TipoOcupacion tipoOcupacion;
 
 	@OneToMany(mappedBy="ocupacion")

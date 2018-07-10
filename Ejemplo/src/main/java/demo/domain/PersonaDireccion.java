@@ -9,16 +9,16 @@ public class PersonaDireccion
 {
 	@Id(strategy=Id.IDENTITY)
 	@Column(name="id_persona_direccion")
-	private int idPersonaDireccion;
+	public int idPersonaDireccion;
 	
 	@Column(name="id_persona")
-	private Persona persona;
+	public Persona persona;
 
 	@Column(name="id_direccion")
-	private Direccion direccion;
+	public Direccion direccion;
 	
 	@Column(name="id_tipo_direccion")
-	private TipoDireccion tipoDireccion;
+	public TipoDireccion tipoDireccion;
 	
 	public TipoDireccion getTipoDireccion()
 	{

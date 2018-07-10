@@ -9,10 +9,10 @@ public class TipoDireccion
 {
 	@Id(strategy=Id.IDENTITY)
 	@Column(name="id_tipo_direccion")
-	private int idTipoDireccion;
+	public int idTipoDireccion;
 	
 	@Column(name="descripcion")
-	private String descripcion;
+	public String descripcion;
 
 	public int getIdTipoDireccion()
 	{
