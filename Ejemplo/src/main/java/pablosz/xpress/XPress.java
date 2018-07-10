@@ -145,6 +145,23 @@ public class XPress
 				variable.set(nuevoObjetoDeMiClase,rs.getDate(nombreVariable));
 		}
 	}
+	private static boolean esPrimitivo(Field variable) throws IllegalAccessException,SQLException
+	{
+
+		Type tipo = variable.getGenericType();
+		if (String.class == tipo) {
+			return true;
+		} else if (int.class == tipo) {
+			return true;
+		} 
+		else if (Integer.class == tipo) {
+			return true;
+		}
+		 else if (java.sql.Date.class == tipo) {
+			 return true;
+		}
+		return false;
+	}
 	static String darNombre(Field variable)
 	{
 		String nombreVariable;
@@ -280,6 +297,7 @@ public class XPress
 	public static int insert(Object p) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, SQLException{
 		String nombreDeLaTabla = obtenerNombreTabla(p.getClass());
 		String xql=String.format("INSERT INTO %s ",nombreDeLaTabla);
+		
 		//
 		
 		//
@@ -288,23 +306,39 @@ public class XPress
 		//"INSERT INTO TEST_PERSONA (id_persona,nombre,direccion,fecha_alta) VALUES ('1','Nombre', 'Dire','2017-12-31')";
 		String nombres="";
 		String valores="";
-		
+		System.out.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzz");
 		for (Field variable : listaAtributos){
 			String formato="%s%s";
 			Method getter=dameGetter(p.getClass(),variable);
+			
 			if(variable.isAnnotationPresent(Column.class)){
-				if(variable.isAnnotationPresent(Id.class)&&variable.getAnnotation(Id.class).strategy()==0){
+				
+				//if(variable.isAnnotationPresent(Id.class)&&variable.getAnnotation(Id.class).strategy()==0){
+				if(!esPrimitivo(variable)){
+					System.out.println("columna primitivo");
+					Object objetito=getter.invoke(p);
+					Field clave = XPress.obtenerCampoId(objetito.getClass());
+					Method miMetodo = XPress.dameGetter(objetito.getClass(),clave);
+					Object valor = miMetodo.invoke(objetito);
+					String campo=variable.getAnnotation(ManyToOne.class).columnName();
+					nombres=String.format(formato,nombres,campo);
+					valores=String.format(formato,valores,valor);
+					insert(objetito);
 				}
 				else{
+					System.out.println("columna compuesta");
 					if(!nombres.isEmpty())
 						formato="%s,%s";
 					nombres=String.format(formato,nombres,darNombre(variable));
 					valores=String.format(formato,valores,getter.invoke(p));
 				}
+				
+				
 			}
 			else if(variable.isAnnotationPresent(ManyToOne.class)){
-				if(variable.getAnnotation(ManyToOne.class).fetchType()==2){//2 es tipo eager
-					if(!nombres.isEmpty())
+				System.out.println("manyToOne compuesta");
+				//if(variable.getAnnotation(ManyToOne.class).fetchType()==2){//2 es tipo eager
+					/*if(!nombres.isEmpty())
 						formato="%s,%s";
 					String campo=variable.getAnnotation(ManyToOne.class).columnName();
 					Object objetito=getter.invoke(p);
@@ -312,9 +346,18 @@ public class XPress
 					String valor = String.format("%s",obtenerClaveForeign(objetito,campo));
 					nombres=String.format(formato,nombres,campo);
 					valores=String.format(formato,valores,valor);
+					*/
+				String campo=variable.getAnnotation(ManyToOne.class).columnName();
+					Object objetito=getter.invoke(p);
+					//el valor
+					Field clave = XPress.obtenerCampoId(objetito.getClass());
+					Method miMetodo = XPress.dameGetter(objetito.getClass(),clave);
+					Object valor = miMetodo.invoke(objetito);
+					nombres=String.format(formato,nombres,campo);
+					valores=String.format(formato,valores,valor);
+					insert(objetito);
 				}
 			}
-		}
 		valores=prepararValores(valores);
 		System.out.println(valores);
 		xql=String.format("%s(%s) VALUES %s",xql,nombres,valores);
