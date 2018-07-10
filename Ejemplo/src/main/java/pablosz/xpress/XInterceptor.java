@@ -32,6 +32,7 @@ public class XInterceptor implements MethodInterceptor {
 		{
 			if(miVariableAChequear.getAnnotation(ManyToOne.class).fetchType()==1) // AHI ES LAZY
 			{
+
 				String clase = miVariableAChequear.getGenericType().getTypeName();
 				Class clazzz=Class.forName(clase);
 				
@@ -47,7 +48,7 @@ public class XInterceptor implements MethodInterceptor {
 				System.out.println(miMetodo.getName());
 				Object miValor = miMetodo.invoke(target);
 				System.out.println(String.format("%s",miValor));
-				String hql = String.format("SELECT %s WHERE %s=%s",nombreCF,claveValor,miValor);
+				String hql = String.format("SELECT %s FROM %s WHERE %s=%s",nombreCF,nombreDeMiTabla,claveValor,miValor);
 				
 				Connection conn = XPress.hacerConexion(); // conecta con la base de datos
 				Statement stmt = conn.createStatement(); // conecta

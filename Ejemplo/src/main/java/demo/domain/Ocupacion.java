@@ -9,10 +9,10 @@ public class Ocupacion
 {
 	@Id(strategy=Id.IDENTITY)
 	@Column(name="id_ocupacion")
-	private int idOcupacion;
+	public int idOcupacion;
 	
 	@Column(name="descripcion")
-	private String descripcion;
+	public String descripcion;
 	
 	@Column(name="id_tipoocupacion")
 	public TipoOcupacion tipoOcupacion;
