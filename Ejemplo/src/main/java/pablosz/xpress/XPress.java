@@ -388,8 +388,10 @@ public class XPress
 					insert(objetito);
 				}
 			}
+		cuantosInserte++;
 		valores=prepararValores(valores);
 		//System.out.println(valores);
+		cuantosInserte++;
 		xql=String.format("%s(%s) VALUES %s",xql,nombres,valores);
 		System.out.println(xql);
 		cuantosInserte++;

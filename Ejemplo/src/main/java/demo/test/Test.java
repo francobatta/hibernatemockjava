@@ -72,17 +72,17 @@ public class Test
 		 System.out.println(p);
 		}
 		Ocupacion o=new Ocupacion();
-		o.setIdOcupacion(1034);
+		o.setIdOcupacion(1036);
 		o.setDescripcion("Estudiante");
 
 		Persona p=new Persona();
-		p.setIdPersona(76);
+		p.setIdPersona(78);
 		p.setNombre("PabloTest");
 		p.setOcupacion(o);
 		// nuestra dicion
 		TipoOcupacion l = new TipoOcupacion();
 		l.setDescripcion("asdasdasd");
-		l.setIdTipoOcupacion(1006);
+		l.setIdTipoOcupacion(1008);
 		//
 		o.setTipoOcupacion(l);
 		// fin nuestra adicion
